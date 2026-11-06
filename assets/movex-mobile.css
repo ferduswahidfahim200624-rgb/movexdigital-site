@@ -1,0 +1,196 @@
+/* MoveX shared mobile system: touch-first layouts, readable type, no sideways overflow. */
+.mobile-swipe-note { display: none; }
+@media (max-width: 760px) {
+  html { scroll-padding-top: 84px; }
+  body { min-width: 320px; overflow-x: hidden; }
+  img, svg, video, canvas { max-width: 100%; }
+  main { overflow: clip; }
+  :is(.shell, .container, .wrap, .detail-shell, .page-shell) {
+    width: min(100% - 32px, 100%) !important;
+    max-width: 100%;
+  }
+  section { scroll-margin-top: 84px; }
+  :is(h1, h2, h3, p, a, button, label, small) { overflow-wrap: anywhere; }
+
+  :is(.hero-grid, .hero-layout, .hero-content-grid, .grid) {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 22px;
+  }
+  :is(.hero, .home-hero) { padding-top: 34px; padding-bottom: 36px; }
+  :is(.hero h1, .home-hero h1) {
+    max-width: 100%;
+    font-size: clamp(38px, 11vw, 58px) !important;
+    line-height: .98;
+    letter-spacing: -.06em;
+  }
+  :is(.hero p, .home-hero .hero-copy) { font-size: 15px; line-height: 1.65; }
+  :is(.hero-art, .hero-visual, .art, .home-art) { min-width: 0; max-width: 100%; }
+  :is(.actions, .hero-actions, .audit-actions, .proof-actions) { flex-wrap: wrap; }
+  :is(.button, .btn, .audit-primary, .audit-secondary) { min-height: 46px; }
+
+  :is(.section-head, .heading, .detail-head, .fit-head, .engagement-head, .faq-head, .problem-heading) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) !important;
+    align-items: start;
+    gap: 10px;
+  }
+  :is(.section-head h2, .heading h2, .detail-head h2, .fit-head h2, .engagement-head h2, .faq-head h2, .problem-heading h2) {
+    max-width: 100%;
+    font-size: clamp(30px, 8vw, 42px);
+    line-height: 1.04;
+  }
+  :is(.section-head p, .heading p, .detail-head > p, .fit-head > p, .engagement-head > p, .faq-head > p, .problem-heading > p) {
+    max-width: 100%;
+    margin: 0;
+    padding-left: 0;
+    border-left: 0;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  :is(.deliverables, .fit-grid, .engagement-grid, .problem-grid, .mini-cards, .work-teasers, .testimonial-grid, .tiers, .cards, .steps, .team-home, .goal-grid, .proof-stats) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  :is(.deliverable, .fit-card, .engagement-card, .problem-card, .mini-card, .testimonial, .proof-stat) { min-width: 0; }
+  :is(.contact-box-home, .contact-box, .contact-grid, .cta-box) { grid-template-columns: minmax(0, 1fr); }
+  :is(.contact-box-home, .contact-box) { padding: 20px; }
+  :is(.form-pair, .form-row) { grid-template-columns: minmax(0, 1fr); }
+  :is(.contact-form-home, .contact-form) { min-width: 0; padding: 16px; }
+  :is(.contact-form-home input, .contact-form-home select, .contact-form-home textarea, .contact-form input, .contact-form select, .contact-form textarea) { min-height: 44px; font-size: 16px; }
+  :is(.contact-form-home textarea, .contact-form textarea) { min-height: 100px; }
+  :is(.cta, .cta-box) { align-items: flex-start; flex-direction: column; gap: 14px; }
+  :is(.detail-footer-grid, .detail-footer-layout, .footgrid) { grid-template-columns: minmax(0, 1fr); }
+  :is(.detail-footer-services nav, .footnav) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  :is(.audit-cta, .audit-actions) { max-width: 100%; }
+
+  .marketing-explorer { grid-template-columns: minmax(0, 1fr); gap: 10px; padding: 9px; }
+  .marketing-art { min-height: 225px; }
+  .marketing-preview-copy { padding: 14px; }
+  .marketing-preview-copy h3 { font-size: 20px; }
+  .marketing-preview-copy p { font-size: 14px; }
+
+  #services, #service-finder, #who-we-work-with { scroll-margin-top: 84px; }
+  #services .section-head { margin-bottom: 13px; }
+  #services .section-head h2 { font-size: clamp(31px, 8.6vw, 43px); }
+  #services .section-head p { margin-top: 8px; }
+  #services .service-count { flex-wrap: wrap; gap: 5px 12px; margin: 0 0 11px; font-size: 11px; }
+  #services .service-experience { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; padding: 9px; border-radius: 17px; }
+  #services .service-options {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    margin: 0 -1px;
+    padding: 1px 1px 6px;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  #services .service-options::-webkit-scrollbar, #service-finder .challenge-rail::-webkit-scrollbar { display: none; }
+  #services .service-option {
+    flex: 0 0 min(78vw, 300px);
+    min-height: 76px;
+    padding: 11px 12px;
+    border: 1px solid #dce6df;
+    border-radius: 13px;
+    background: #fff;
+    scroll-snap-align: center;
+  }
+  #services .service-option strong { font-size: 13px; }
+  #services .service-option small { font-size: 10px; }
+  #services .service-option.active { border-color: #137c48; background: #137c48; }
+  #services .mobile-swipe-note, #service-finder .mobile-swipe-note {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 0 4px 2px;
+    color: #6b7b70;
+    font-size: 10px;
+    font-weight: 700;
+  }
+  #services .mobile-swipe-note::after, #service-finder .mobile-swipe-note::after { content: "→"; color: #13834d; font-size: 15px; }
+  #services .service-preview { grid-template-rows: minmax(190px, 48vw) auto; border-radius: 14px; }
+  #services .service-visual { min-height: 190px; }
+  #services .service-visual::before { width: 230px; height: 230px; box-shadow: 0 0 0 20px #16844708, 0 0 0 42px #16844706; }
+  #services .service-visual::after { width: 155px; height: 155px; }
+  #services .visual-card { width: min(88%, 370px); padding: 17px; }
+  #services .visual-card::before { margin-bottom: 13px; padding: 10px 11px; }
+  #services .visual-mark { margin-bottom: 9px; font-size: clamp(26px, 7vw, 34px); }
+  #services .service-description { padding: 13px 14px 15px; }
+  #services .service-tags { gap: 5px; }
+  #services .service-tags span { padding: 5px 8px; font-size: 9px; }
+  #services .service-description h3 { font-size: 20px; }
+  #services .service-description p { font-size: 13px; }
+  #services .service-description > a { min-height: 42px; align-items: center; font-size: 13px; }
+  #services .services-more { margin-top: 12px; }
+
+  #service-finder .diagnostic-heading { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; margin-bottom: 13px; }
+  #service-finder .diagnostic-heading h2 { font-size: clamp(31px, 8.6vw, 43px); line-height: 1.03; }
+  #service-finder .diagnostic-heading p { margin: 0; font-size: 14px; line-height: 1.55; }
+  #service-finder .diagnostic-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  #service-finder .challenge-list { min-width: 0; padding: 11px; border-radius: 14px; }
+  #service-finder .challenge-list > small { padding: 0 2px 8px; font-size: 9px; }
+  #service-finder .challenge-rail {
+    display: flex;
+    gap: 8px;
+    margin-right: -2px;
+    padding: 1px 2px 6px;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  #service-finder .challenge-option {
+    flex: 0 0 min(79vw, 300px);
+    min-height: 72px;
+    padding: 10px;
+    border: 1px solid #e0e6df;
+    border-radius: 12px;
+    background: #fff;
+    scroll-snap-align: center;
+  }
+  #service-finder .challenge-option.active { background: #285b44; border-color: #285b44; }
+  #service-finder .challenge-option b { font-size: 12px; }
+  #service-finder .challenge-option small { font-size: 10px; }
+  #service-finder .diagnostic-result { min-width: 0; padding: 16px; border-radius: 15px; }
+  #service-finder .diagnostic-main { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  #service-finder .diagnostic-main h3 { font-size: clamp(24px, 7vw, 32px); line-height: 1.08; }
+  #service-finder .diagnostic-main p { font-size: 13px; line-height: 1.55; }
+  #service-finder .services-fit { padding: 12px; }
+  #service-finder .services-fit #goal-links { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  #service-finder .services-fit #goal-links a { min-height: 42px; }
+  #service-finder .progress-watch { margin-top: 12px; }
+  #service-finder .progress-watch > div { display: flex; flex-wrap: wrap; gap: 6px; }
+}
+
+@media (max-width: 520px) {
+  :is(.deliverables, .fit-grid, .engagement-grid, .problem-grid, .mini-cards, .work-teasers, .testimonial-grid, .tiers, .cards, .steps, .team-home) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  :is(.proof-stats, .goal-grid, .why-points) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  :is(.section, .detail, .problem-section, .fit-section, .related, .home-section) { padding-top: 38px; padding-bottom: 40px; }
+  :is(.deliverable, .fit-card, .engagement-card, .problem-card, .mini-card, .testimonial) { padding: 17px; }
+  :is(.audit-cta, .cta-box) { padding: 17px; }
+  :is(.service-tags, .marketing-tags, .proof-country-list) { flex-wrap: wrap; }
+  :is(.faq-list summary, .faq summary) { font-size: 14px; line-height: 1.4; }
+  .detail-footer-bottom { align-items: flex-start; flex-direction: column; }
+  .marketing-options {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 8px !important;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .marketing-option { flex: 0 0 min(78vw, 280px); min-height: 66px !important; scroll-snap-align: center; }
+  .marketing-art { min-height: 205px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
