@@ -102,6 +102,7 @@ body{background:#fff;color:#17191e;font-size:16px}.header{background:#ffffffed;b
 <script>const nav=document.querySelector('.nav'),toggle=document.querySelector('.toggle');toggle.addEventListener('click',()=>{const open=nav.classList.toggle('open');toggle.setAttribute('aria-expanded',String(open))});nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{nav.classList.remove('open');toggle.setAttribute('aria-expanded','false')}));document.querySelector('#year').textContent=new Date().getFullYear();</script>
   <script src="assets/movex-footer.js" defer></script>
   <script src="assets/movex-header.js" defer></script>
+  <script src="assets/movex-data-layer.js" defer></script>
 </body></html>
 
 

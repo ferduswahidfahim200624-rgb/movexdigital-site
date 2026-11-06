@@ -84,6 +84,7 @@
 <script>const toggle=document.querySelector('.toggle'),nav=document.querySelector('.nav'),group=document.querySelector('.nav-group'),groupLink=document.querySelector('.nav-group>a');toggle.addEventListener('click',()=>{const open=nav.classList.toggle('open');toggle.setAttribute('aria-expanded',open)});groupLink.addEventListener('click',e=>{if(window.matchMedia('(max-width:700px)').matches&&!group.classList.contains('open')){e.preventDefault();group.classList.add('open');groupLink.setAttribute('aria-expanded','true')}});document.querySelector('#year').textContent=new Date().getFullYear();</script>
   <script src="assets/movex-footer.js" defer></script>
   <script src="assets/movex-header.js" defer></script>
+  <script src="assets/movex-data-layer.js" defer></script>
 </body>
 </html>
 
