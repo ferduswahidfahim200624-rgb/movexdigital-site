@@ -12,3 +12,19 @@
 #movex-global-footer .mx-footer-bottom{display:flex;justify-content:space-between;align-items:center;gap:18px;border-top:1px solid var(--mx-line);padding:16px 8px 0;color:#bdc9c9;font-size:12px}#movex-global-footer .mx-footer-bottom a{font-weight:700}
 @media(max-width:900px){#movex-global-footer .mx-footer-links{grid-template-columns:minmax(190px,.8fr) minmax(0,1.6fr);gap:28px 24px}#movex-global-footer .mx-footer-links>.mx-footer-col{grid-column:1/-1;columns:2}.mx-footer-service-columns{gap:20px}}
 @media(max-width:560px){#movex-global-footer{padding:25px 18px 16px}#movex-global-footer .mx-footer-links{grid-template-columns:1fr;gap:24px;padding-left:0;padding-right:0}#movex-global-footer .mx-footer-brand,#movex-global-footer .mx-footer-links>.mx-footer-col{grid-column:auto}#movex-global-footer .mx-footer-links>.mx-footer-col{columns:1}.mx-footer-service-columns{grid-template-columns:1fr 1fr;gap:14px}#movex-global-footer .mx-panel-top{align-items:flex-start;flex-direction:column;gap:4px}#movex-global-footer .mx-media-panel{padding:14px}#movex-global-footer .mx-newsletter-row{flex-direction:column}#movex-global-footer .mx-newsletter button{height:36px}#movex-global-footer .mx-footer-bottom{flex-wrap:wrap;padding-left:0;padding-right:0}#movex-global-footer .mx-footer-bottom span:nth-child(2){display:none}}
+/* Give the markets MoveX serves a clearer, editorial presence in the shared footer. */
+#movex-global-footer .mx-footer-brand { padding: 14px; border: 1px solid rgba(157,224,181,.16); border-radius: 16px; background: linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018)); }
+#movex-global-footer .mx-footer-brand img { width: 168px; }
+#movex-global-footer .mx-regions-title { display:flex; align-items:center; gap:9px; margin-top:16px; }
+#movex-global-footer .mx-regions-title::after { content:"5 MARKETS"; padding:4px 7px; border:1px solid rgba(157,224,181,.25); border-radius:999px; color:#d5f0de; font-size:8px; letter-spacing:.1em; }
+#movex-global-footer .mx-regions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+#movex-global-footer .mx-regions span { display:flex; align-items:center; gap:7px; min-height:31px; padding:6px 8px; border-color:rgba(255,255,255,.18); border-radius:9px; background:rgba(255,255,255,.045); font-size:10px; line-height:1.25; transition:background .2s,border-color .2s,transform .2s; }
+#movex-global-footer .mx-regions span::before { display:grid; place-items:center; flex:none; width:21px; height:17px; border-radius:4px; background:rgba(157,224,181,.12); color:var(--mx-mint); font-size:7px; font-weight:900; letter-spacing:.02em; }
+#movex-global-footer .mx-regions span:nth-child(1)::before { content:"AU"; }
+#movex-global-footer .mx-regions span:nth-child(2)::before { content:"CA"; }
+#movex-global-footer .mx-regions span:nth-child(3)::before { content:"US"; }
+#movex-global-footer .mx-regions span:nth-child(4)::before { content:"DE"; }
+#movex-global-footer .mx-regions span:nth-child(5)::before { content:"AE"; }
+#movex-global-footer .mx-regions span:hover { transform:translateY(-1px); border-color:rgba(157,224,181,.4); background:rgba(157,224,181,.09); }
+@media(max-width:900px) { #movex-global-footer .mx-regions { max-width:310px; } }
+@media(max-width:560px) { #movex-global-footer .mx-footer-brand { padding:13px; } #movex-global-footer .mx-regions { max-width:none; grid-template-columns:repeat(2,minmax(0,1fr)); } }
