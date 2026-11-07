@@ -35,3 +35,18 @@
 .mx-media-page .media-email-row button:hover{background:#0f6c39}
 @media(max-width:900px){.mx-media-page .media-space-hero{min-height:390px}.mx-media-page .media-space-copy{padding-left:35px}}
 @media(max-width:620px){.mx-media-page .media-space-hero{min-height:465px}.mx-media-page .media-space-art{height:56%;filter:brightness(1.14) saturate(1.05)}.mx-media-page .media-space-hero:before{background:linear-gradient(180deg,rgba(6,19,38,.78) 0%,rgba(6,19,38,.7) 37%,rgba(6,19,38,.37) 58%,rgba(6,19,38,.04) 100%),linear-gradient(0deg,rgba(4,15,32,.18),transparent 34%)}.mx-media-page .media-space-copy{padding:27px 20px 104px}.mx-media-page .media-orbit-note{bottom:42px}.mx-media-page .media-principles-row{background:#f9fbf8}.mx-media-page .media-library-tools{padding:9px;border-radius:12px}.mx-media-page .media-card-copy{padding:15px}.mx-media-page .media-newsletter-card{padding:18px}}
+
+/* Latest article: date-led feature card with a custom editorial cover. */
+.mx-media-page .media-latest-card{border-color:#d9e7dc;box-shadow:0 16px 36px #10231612}
+.mx-media-page .media-latest-card .media-visual-local{position:relative;display:block;min-height:205px;padding:0;background:#e7f0e9}
+.media-visual-local img{display:block;width:100%;height:100%;min-height:inherit;object-fit:cover;object-position:center}
+.media-latest-badge{position:absolute;top:13px;left:13px;display:inline-flex;align-items:center;gap:7px;padding:8px 11px;border:1px solid #ffffffba;border-radius:99px;background:#fff;color:#12304a;font-size:8px;font-weight:900;letter-spacing:.1em;box-shadow:0 7px 20px #0b1b3222}
+.media-latest-badge i{width:7px;height:7px;border-radius:50%;background:#f4a52c;box-shadow:0 0 0 4px #f4a52c26}
+.media-local-caption{position:absolute;right:12px;bottom:12px;padding:7px 9px;border:1px solid #ffffff55;border-radius:7px;background:#0b1b34df;color:#fff;font-size:7px;font-weight:850;letter-spacing:.1em}
+.mx-media-page .media-latest-card .media-card-copy>span{flex-wrap:wrap;line-height:1.5}
+.mx-media-page .media-latest-card .media-card-copy time{color:#738071;font-size:8px;font-weight:800;letter-spacing:.06em}
+.mx-media-page .media-latest-card .media-card-copy h3{font-size:22px}
+.mx-media-page .media-latest-card .media-card-copy a{color:#125e37}
+.mx-media-page .media-latest-card:hover{border-color:#eaba55}
+@media(max-width:900px){.mx-media-page .media-latest-card .media-visual-local{min-height:190px}}
+@media(max-width:620px){.mx-media-page .media-latest-card .media-visual-local{min-height:165px}.mx-media-page .media-latest-card .media-card-copy h3{font-size:19px}}

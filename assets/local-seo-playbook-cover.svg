@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 760" role="img" aria-labelledby="title desc">
+  <title id="title">Local SEO visibility system</title>
+  <desc id="desc">An editorial illustration connecting a local search result, service area map, and qualified enquiry signals.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#f8f6ef"/><stop offset=".55" stop-color="#e6f1e8"/><stop offset="1" stop-color="#d2e5dc"/></linearGradient>
+    <linearGradient id="dark" x2="1" y2="1"><stop stop-color="#0a1b34"/><stop offset="1" stop-color="#104d3b"/></linearGradient>
+    <linearGradient id="green" x2="1" y2="1"><stop stop-color="#18834a"/><stop offset="1" stop-color="#75c391"/></linearGradient>
+    <filter id="shadow" x="-.2" y="-.2" width="1.4" height="1.5"><feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#0b1b32" flood-opacity=".16"/></filter>
+    <pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.2" fill="#168447" opacity=".18"/></pattern>
+  </defs>
+  <rect width="1440" height="760" rx="32" fill="url(#bg)"/>
+  <rect width="1440" height="760" rx="32" fill="url(#dots)"/>
+  <circle cx="1190" cy="160" r="245" fill="none" stroke="#168447" stroke-opacity=".09" stroke-width="50"/>
+  <circle cx="1190" cy="160" r="170" fill="none" stroke="#f4a52c" stroke-opacity=".52" stroke-width="2"/>
+  <path d="M0 610 Q260 500 474 610T950 602T1440 584V760H0Z" fill="#fff" opacity=".42"/>
+  <g filter="url(#shadow)">
+    <rect x="100" y="104" width="760" height="522" rx="25" fill="#fff"/>
+    <rect x="100" y="104" width="760" height="66" rx="25" fill="#f8faf8"/>
+    <path d="M100 145v25h760v-25" fill="#f8faf8"/>
+    <circle cx="137" cy="137" r="7" fill="#f4a52c"/><circle cx="160" cy="137" r="7" fill="#168447"/><circle cx="183" cy="137" r="7" fill="#0b1b34"/>
+    <rect x="223" y="122" width="390" height="30" rx="15" fill="#fff" stroke="#e2e9e3"/>
+    <circle cx="246" cy="137" r="6" fill="none" stroke="#168447" stroke-width="2"/><path d="m251 142 5 5" stroke="#168447" stroke-width="2"/>
+    <text x="270" y="142" fill="#708071" font-family="Arial,sans-serif" font-size="12">local service near me</text>
+    <text x="142" y="207" fill="#168447" font-family="Arial,sans-serif" font-size="12" font-weight="700" letter-spacing="2">A CLEARER LOCAL SEARCH JOURNEY</text>
+    <text x="142" y="250" fill="#0b1b34" font-family="Arial,sans-serif" font-size="26" font-weight="700">Trusted services, easier to find.</text>
+    <rect x="142" y="277" width="676" height="1" fill="#e5ebe5"/>
+    <g>
+      <rect x="142" y="298" width="420" height="91" rx="13" fill="#f5f8f5" stroke="#e4ebe4"/>
+      <circle cx="171" cy="329" r="11" fill="#e2f1e6"/><path d="M166 329h10m-5-5v10" stroke="#168447" stroke-width="2"/>
+      <text x="195" y="327" fill="#168447" font-family="Arial,sans-serif" font-size="12" font-weight="700">LOCAL SERVICE · VERIFIED DETAILS</text>
+      <text x="166" y="359" fill="#0b1b34" font-family="Arial,sans-serif" font-size="19" font-weight="700">A service page that answers real questions</text>
+      <rect x="166" y="371" width="180" height="5" rx="3" fill="#f4a52c"/>
+    </g>
+    <g>
+      <rect x="142" y="409" width="420" height="91" rx="13" fill="#f5f8f5" stroke="#e4ebe4"/>
+      <circle cx="171" cy="440" r="11" fill="#e2f1e6"/><path d="M165 440h12m-6-6 6 6-6 6" fill="none" stroke="#168447" stroke-width="2"/>
+      <text x="195" y="438" fill="#168447" font-family="Arial,sans-serif" font-size="12" font-weight="700">USEFUL CONTENT · CLEAR NEXT STEP</text>
+      <text x="166" y="470" fill="#0b1b34" font-family="Arial,sans-serif" font-size="19" font-weight="700">From discovery to a qualified enquiry</text>
+      <path d="M166 483h230" stroke="#168447" stroke-width="5" stroke-linecap="round"/>
+    </g>
+    <rect x="590" y="298" width="228" height="202" rx="14" fill="url(#dark)"/>
+    <path d="M612 353c40-38 57 31 91-6s48 10 89-27" fill="none" stroke="#ffb640" stroke-width="4" stroke-linecap="round"/>
+    <path d="M612 366h184M612 391h184M612 416h184M612 441h184" stroke="#fff" stroke-opacity=".15"/>
+    <text x="612" y="328" fill="#b9e6c7" font-family="Arial,sans-serif" font-size="10" font-weight="700" letter-spacing="1.4">MEASURE WHAT MATTERS</text>
+    <text x="612" y="470" fill="#fff" font-family="Arial,sans-serif" font-size="12">Relevant visits → enquiries</text>
+    <text x="142" y="556" fill="#728174" font-family="Arial,sans-serif" font-size="11" font-weight="700" letter-spacing="1.4">RELEVANCE · PROOF · A USEFUL NEXT STEP</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="910" y="264" width="426" height="350" rx="24" fill="#fff"/>
+    <rect x="932" y="286" width="382" height="306" rx="16" fill="#edf4ee"/>
+    <path d="M947 354 1030 320l67 35 72-39 126 55-18 75-110 25-70-28-84 31-78-57z" fill="#d6e7dc" stroke="#bdd6c4" stroke-width="2"/>
+    <path d="M971 364 1042 344l54 31 69-33 94 42M960 444l85-21 42 29 82-37 88 26M1002 316l-12 231M1076 306l-8 250M1150 310l4 245M1225 321l18 220" fill="none" stroke="#fff" stroke-width="3" opacity=".85"/>
+    <path d="M985 477c68-15 104-83 178-78 53 4 83 43 120 18" fill="none" stroke="#168447" stroke-width="5" stroke-linecap="round" stroke-dasharray="3 12"/>
+    <path d="M1114 386c0-29 23-52 52-52s52 23 52 52c0 39-52 91-52 91s-52-52-52-91z" fill="#f4a52c" stroke="#fff" stroke-width="7"/>
+    <circle cx="1166" cy="385" r="16" fill="#fff"/><circle cx="1166" cy="385" r="7" fill="#168447"/>
+    <rect x="961" y="515" width="325" height="52" rx="12" fill="#fff" stroke="#e0e9e0"/>
+    <circle cx="985" cy="541" r="7" fill="#168447"/><text x="1003" y="538" fill="#0b1b34" font-family="Arial,sans-serif" font-size="12" font-weight="700">SERVICE AREA · REAL CUSTOMERS</text><text x="1003" y="554" fill="#728174" font-family="Arial,sans-serif" font-size="10">Make local relevance genuinely useful</text>
+  </g>
+  <g transform="translate(1020 648)"><rect width="270" height="48" rx="24" fill="#0b1b34"/><circle cx="25" cy="24" r="6" fill="#f4a52c"/><text x="43" y="28" fill="#fff" font-family="Arial,sans-serif" font-size="11" font-weight="700" letter-spacing="1.2">LOCAL SEO · BUILT ON REAL SIGNALS</text></g>
+</svg>
