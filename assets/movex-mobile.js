@@ -9,6 +9,15 @@
   if (servicesData && serviceExperience && serviceSection) {
     const optionKeys = [...serviceExperience.querySelectorAll('.service-option')].map((option) => option.dataset.service);
     const entries = optionKeys.map((key) => [key, servicesData[key]]).filter(([, service]) => Boolean(service));
+    const artwork = {
+      seo: ['seo.svg', 'Search visibility dashboard with SEO foundations and organic search results'],
+      google: ['google-ads.svg', 'Google Ads performance dashboard with campaign and conversion trends'],
+      ai: ['ai-search-geo.svg', 'AI search visibility map with answer-ready content and citation signals'],
+      meta: ['paid-social.svg', 'Paid social campaign audience and creative preview'],
+      web: ['web-design.svg', 'Responsive website experience and customer journey preview'],
+      automation: ['business-automation.svg', 'Lead capture, CRM, follow-up, and customer support workflow'],
+      growth: ['growth-build.svg', 'Growth journey connecting discovery, conversion, and customer retention'],
+    };
     const carousel = document.createElement('div');
     carousel.className = 'mobile-service-carousel';
     carousel.setAttribute('role', 'region');
@@ -20,11 +29,7 @@
           <article class="mobile-service-card" role="listitem" aria-label="${index + 1} of ${entries.length}">
             <a class="mobile-service-card-link" href="${service.link}" aria-label="Explore ${service.title}">
               <div class="mobile-service-art">
-                <div class="mobile-service-art-card">
-                  <small>${service.kicker}</small>
-                  <strong>${service.mark}</strong>
-                  <span class="mobile-service-colorline"><i></i><i></i><i></i></span>
-                </div>
+                <img class="mobile-service-art-image" src="assets/service-art/${artwork[key]?.[0] || 'seo.svg'}" alt="MoveX ${service.title}: ${artwork[key]?.[1] || 'service visual'}" loading="lazy" decoding="async">
                 <span class="mobile-service-index">${String(index + 1).padStart(2, '0')} <i>/ ${String(entries.length).padStart(2, '0')}</i></span>
               </div>
               <div class="mobile-service-content">
