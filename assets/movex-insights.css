@@ -50,3 +50,14 @@
 .mx-media-page .media-latest-card:hover{border-color:#eaba55}
 @media(max-width:900px){.mx-media-page .media-latest-card .media-visual-local{min-height:190px}}
 @media(max-width:620px){.mx-media-page .media-latest-card .media-visual-local{min-height:165px}.mx-media-page .media-latest-card .media-card-copy h3{font-size:19px}}
+
+/* Make the full article card an accessible, single-target link. */
+.mx-media-page .media-article-grid .article-card{position:relative;cursor:pointer;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+.mx-media-page .media-article-grid .article-card .media-card-copy>a::after{position:absolute;inset:0;z-index:2;border-radius:inherit;content:""}
+.mx-media-page .media-article-grid .article-card:hover{transform:translateY(-3px);border-color:#c8d9cb;box-shadow:0 17px 34px #10231616}
+.mx-media-page .media-article-grid .article-card .media-card-copy>a:focus-visible::after{outline:3px solid #f4a52c;outline-offset:-5px}
+.mx-media-page .media-latest-card{border-color:#e5b84f;box-shadow:0 14px 34px #d49c2423,0 0 0 2px #f4a52c24}
+.mx-media-page .media-latest-card .media-latest-badge{top:15px;left:15px;gap:8px;padding:10px 14px;border:1px solid #fff;background:#f4a52c;color:#07152d;font-size:10px;font-weight:950;letter-spacing:.11em;box-shadow:0 8px 22px #07152d35}
+.mx-media-page .media-latest-card .media-latest-badge i{width:8px;height:8px;background:#168447;box-shadow:0 0 0 4px #16844726}
+.mx-media-page .media-latest-card .media-card-copy time{color:#168447;font-weight:900}
+
