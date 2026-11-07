@@ -2,7 +2,7 @@
   const servicesData = typeof serviceData !== 'undefined' ? serviceData : window.moveXServiceData;
   const serviceExperience = document.querySelector('#services .service-experience');
   const serviceSection = document.querySelector('#services .shell');
-  const mobile = window.matchMedia('(max-width: 760px)');
+  const serviceRailMobile = window.matchMedia('(max-width: 760px)');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   // On phones, show one complete service card at a time and advance the deck.
@@ -68,7 +68,7 @@
     const stop = () => { window.clearInterval(timer); timer = 0; };
     const start = () => {
       stop();
-      if (!mobile.matches || reducedMotion.matches || userPaused || document.hidden || cards.length < 2) return;
+      if (!serviceRailMobile.matches || reducedMotion.matches || userPaused || document.hidden || cards.length < 2) return;
       timer = window.setInterval(() => setIndex(activeIndex + 1, true), 5000);
     };
     const pauseForInteraction = () => {
@@ -106,9 +106,9 @@
   if (!cards.length) return;
 
   let frame = 0;
-  const mobile = window.matchMedia('(max-width: 760px)');
+  const serviceOptionsMobile = window.matchMedia('(max-width: 760px)');
   const updateCarousel = () => {
-    if (!mobile.matches) {
+    if (!serviceOptionsMobile.matches) {
       cards.forEach((card) => { card.style.removeProperty('transform'); card.style.removeProperty('opacity'); });
       return;
     }
