@@ -233,7 +233,7 @@
 
 /* Full-width service cards advance automatically on phones. */
 .mobile-service-carousel { display: none; }
-@media (max-width: 760px) {
+@media (max-width: 960px) {
   #services .service-experience { display: none !important; }
   #services .mobile-service-carousel { display: block; margin: 0 -16px; }
   #services .mobile-service-rail {
