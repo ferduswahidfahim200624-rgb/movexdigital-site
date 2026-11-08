@@ -1,0 +1,14 @@
+name = "movexdigital-private-inbox"
+main = "src/index.js"
+compatibility_date = "2026-11-08"
+workers_dev = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "movexdigital-inbox"
+database_id = "REPLACE_WITH_ID_FROM_WRANGLER_D1_CREATE"
+migrations_dir = "migrations"
+
+[vars]
+ALLOWED_ORIGINS = "https://www.movexdigital.site,https://movexdigital.site,https://ferduswahidfahim200624-rgb.github.io"
+TOKEN_TTL_SECONDS = "43200"

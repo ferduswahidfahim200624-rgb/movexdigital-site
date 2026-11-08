@@ -9,7 +9,7 @@ MoveX is a GitHub-first, content-driven website. Public content is authored in t
 3. On every push to `main` (or a manual workflow run), GitHub Actions builds standalone article pages, inserts article cards into Our Media, adds canonical/share metadata, generates a fresh sitemap and RSS feed, and packages the complete site.
 4. GitHub Pages deploys the generated `dist/` output.
 
-See [`content/articles/README.md`](content/articles/README.md) for the article format and publishing rules. A public static site cannot securely accept and store private leads or provide an authenticated live admin editor by itself. Current contact and newsletter forms use the existing email handoff. Do not put credentials, private client records, or unpublished drafts in this public repository.
+See [`content/articles/README.md`](content/articles/README.md) for the article format and publishing rules. GitHub Pages remains static, so the private lead/newsletter inbox uses the separate Cloudflare Worker + D1 service described in [`cloudflare/README.md`](cloudflare/README.md). The deployable admin screen is at `/admin/`; only the authenticated API returns private submissions. Cloudflare setup and secrets are required before the forms can store records. Do not put credentials, private client records, or unpublished drafts in this public repository.
 
 ## SEO publishing flow
 

@@ -1,3 +1,6 @@
 dist/
 __pycache__/
 *.py[cod]
+cloudflare/wrangler.toml
+cloudflare/.dev.vars
+node_modules/

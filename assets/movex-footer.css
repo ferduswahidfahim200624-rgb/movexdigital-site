@@ -12,6 +12,18 @@
 #movex-global-footer .mx-footer-bottom{display:flex;justify-content:space-between;align-items:center;gap:18px;border-top:1px solid var(--mx-line);padding:16px 8px 0;color:#bdc9c9;font-size:12px}#movex-global-footer .mx-footer-bottom a{font-weight:700}
 @media(max-width:900px){#movex-global-footer .mx-footer-links{grid-template-columns:minmax(190px,.8fr) minmax(0,1.6fr);gap:28px 24px}#movex-global-footer .mx-footer-links>.mx-footer-col{grid-column:1/-1;columns:2}.mx-footer-service-columns{gap:20px}}
 @media(max-width:560px){#movex-global-footer{padding:25px 18px 16px}#movex-global-footer .mx-footer-links{grid-template-columns:1fr;gap:24px;padding-left:0;padding-right:0}#movex-global-footer .mx-footer-brand,#movex-global-footer .mx-footer-links>.mx-footer-col{grid-column:auto}#movex-global-footer .mx-footer-links>.mx-footer-col{columns:1}.mx-footer-service-columns{grid-template-columns:1fr 1fr;gap:14px}#movex-global-footer .mx-panel-top{align-items:flex-start;flex-direction:column;gap:4px}#movex-global-footer .mx-media-panel{padding:14px}#movex-global-footer .mx-newsletter-row{flex-direction:column}#movex-global-footer .mx-newsletter button{height:36px}#movex-global-footer .mx-footer-bottom{flex-wrap:wrap;padding-left:0;padding-right:0}#movex-global-footer .mx-footer-bottom span:nth-child(2){display:none}}
+.mx-form-consent{display:flex!important;align-items:flex-start;gap:8px;margin:10px 0 7px!important;color:#68768a;font-size:11px!important;font-weight:500!important;line-height:1.5}
+.mx-form-consent input[type="checkbox"]{flex:0 0 15px;width:15px!important;height:15px;margin:1px 0 0;accent-color:#13834d}
+.mx-form-consent a{color:#087b47;text-decoration:underline!important;text-underline-offset:2px}
+.mx-form-status{display:block;margin-top:7px;color:#617184;font-size:10px;line-height:1.45}
+.mx-form-status.is-error{color:#a63a28}.mx-form-status.is-success{color:#147849}
+#movex-global-footer .mx-form-consent{color:#526766;font-size:9px!important}
+#movex-global-footer .mx-form-consent a{color:#075b38}
+.mx-form-trap{position:absolute!important;left:-10000px!important;top:auto!important;width:1px!important;height:1px!important;overflow:hidden!important}
+.contact-form-home .mx-form-consent{grid-column:1/-1;margin:10px 0 4px!important}
+.contact-form-home .mx-form-consent input[type="checkbox"]{width:15px!important;height:15px;padding:0;border:0}
+.contact-form-home .mx-form-status{grid-column:1/-1}
+.contact-form-home button:disabled,#movex-global-footer .mx-newsletter button:disabled{opacity:.7;cursor:wait}
 /* Give the markets MoveX serves a clearer, editorial presence in the shared footer. */
 #movex-global-footer .mx-footer-brand { padding: 14px; border: 1px solid rgba(157,224,181,.16); border-radius: 16px; background: linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018)); }
 #movex-global-footer .mx-footer-brand img { width: 168px; }

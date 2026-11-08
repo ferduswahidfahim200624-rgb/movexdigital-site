@@ -199,7 +199,7 @@ def render_post(post: dict, header: str, footer: str) -> str:
 <div class="post-shell post-layout"><article class="post-content"><p class="post-intro">{esc(post['excerpt'])}</p>{body_html}
 <section class="post-end-cta"><div><h2>Put the next move into practice.</h2><p>Tell MoveX what you want to improve and we’ll help you choose a practical next step.</p></div><a href="index.html#contact">Talk with MoveX ↗</a></section>
 <a class="post-back-link" href="insights.html">← Explore more MoveX insights</a></article><aside class="post-toc"><b>Keep exploring</b><a href="services.html">Explore our services</a><a href="work.html">See selected work</a><a class="toc-service" href="index.html#contact">Discuss your next move ↗</a></aside></div>
-</main>{footer}<script src="assets/movex-header.js" defer></script><script src="assets/movex-footer.js" defer></script><script src="assets/movex-article.js" defer></script>
+</main>{footer}<script src="assets/movex-header.js" defer></script><script src="assets/movex-inbox-config.js"></script><script src="assets/movex-footer.js" defer></script><script src="assets/movex-article.js" defer></script>
 </body></html>'''
 
 
@@ -294,11 +294,18 @@ def build() -> None:
             continue
         shutil.copy2(page, DIST / page.name)
     shutil.copytree(ROOT / "assets", DIST / "assets")
+    admin_source = ROOT / "admin"
+    if admin_source.is_dir():
+        shutil.copytree(admin_source, DIST / "admin")
     legacy_origin = "https://ferduswahidfahim200624-rgb.github.io/movexdigital-site/"
     for page in DIST.glob("*.html"):
         content = page.read_text(encoding="utf-8")
         if legacy_origin in content:
             content = content.replace(legacy_origin, ORIGIN)
+        content = content.replace(
+            '<script src="assets/movex-footer.js"',
+            '<script src="assets/movex-inbox-config.js"></script><script src="assets/movex-footer.js"',
+        )
         content = ensure_page_metadata(page, content)
         page.write_text(content, encoding="utf-8")
     for public_file in ("robots.txt",):
