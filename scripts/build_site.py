@@ -217,6 +217,64 @@ def article_card(post: dict, is_latest: bool) -> str:
     return f'''<a class="article-card media-feature-card generated-article-card{' media-latest-card' if is_latest else ''}" data-topic="{topic}" data-search="{search_terms}" href="insights/{esc(slug)}/" aria-label="Read: {title}"><div class="media-card-visual"><img src="{image}" alt="{alt}" loading="lazy">{latest}</div><div class="media-card-copy"><span>{category.upper()} · {int(post.get('read_minutes', 6))} MIN READ · <time datetime="{published}">{post['published'].strftime('%B %d, %Y').upper()}</time></span><h3>{title}</h3><p>{excerpt}</p><span class="generated-read-link">Read the article <span aria-hidden="true">↗</span></span></div></a>'''
 
 
+def ensure_page_metadata(path: Path, content: str) -> str:
+    """Give every root-level public HTML page a self-canonical and share metadata."""
+    title_match = re.search(r"<title[^>]*>(.*?)</title>", content, re.I | re.S)
+    title = html.unescape(re.sub(r"\s+", " ", title_match.group(1)).strip()) if title_match else f"{path.stem.replace('-', ' ').title()} | MoveX Digital"
+    description_match = re.search(r'<meta\b(?=[^>]*\bname=["\']description["\'])(?=[^>]*\bcontent=["\'](.*?)["\'])[^>]*>', content, re.I | re.S)
+    description = html.unescape(description_match.group(1).strip()) if description_match else f"Explore {title.removesuffix(' | MoveX Digital')} from MoveX Digital. Practical digital strategy, services, and guidance for business growth."
+    description = re.sub(r"\s+", " ", description).strip()
+    canonical = ORIGIN if path.name == "index.html" else urljoin(ORIGIN, path.name)
+
+    # Replace any stale/duplicate canonical so every page has exactly one URL.
+    content = re.sub(r"\s*<link\b(?=[^>]*\brel=[\"']canonical[\"'])[^>]*>", "", content, flags=re.I)
+    additions = [f'<link rel="canonical" href="{esc(canonical)}">']
+    if not description_match:
+        additions.append(f'<meta name="description" content="{esc(description)}">')
+    defaults = [
+        ("og:type", "website"),
+        ("og:site_name", "MoveX Digital"),
+        ("og:title", title),
+        ("og:description", description),
+        ("og:url", canonical),
+    ]
+    for key, value in defaults:
+        if not re.search(rf'<meta\b(?=[^>]*\bproperty=["\']{re.escape(key)}["\'])', content, re.I):
+            additions.append(f'<meta property="{esc(key)}" content="{esc(value)}">')
+    if not re.search(r'<meta\b(?=[^>]*\bname=["\']twitter:card["\'])', content, re.I):
+        additions.append('<meta name="twitter:card" content="summary_large_image">')
+
+    if path.name == "insights.html" and not re.search(r'<link\b(?=[^>]*\btype=["\']application/rss\+xml["\'])', content, re.I):
+        additions.append('<link rel="alternate" type="application/rss+xml" title="MoveX Media" href="feed.xml">')
+    head_close = re.search(r"</head\s*>", content, re.I)
+    if head_close:
+        content = content[:head_close.start()] + "\n".join(additions) + "\n" + content[head_close.start():]
+    return content
+
+
+def generate_rss(posts: list[dict]) -> bytes:
+    """Create a standard RSS feed for public articles authored in GitHub."""
+    rss = ET.Element("rss", {"version": "2.0", "xmlns:atom": "http://www.w3.org/2005/Atom"})
+    channel = ET.SubElement(rss, "channel")
+    ET.SubElement(channel, "title").text = "MoveX Media"
+    ET.SubElement(channel, "link").text = urljoin(ORIGIN, "insights.html")
+    ET.SubElement(channel, "description").text = "Practical business strategies, SEO and AI search guidance, paid media insights, platform updates, and automation playbooks from MoveX Digital."
+    ET.SubElement(channel, "language").text = "en"
+    ET.SubElement(channel, "lastBuildDate").text = datetime.now(timezone.utc).strftime("%a, %d %b %Y %H:%M:%S +0000")
+    ET.SubElement(channel, "{http://www.w3.org/2005/Atom}link", {"href": urljoin(ORIGIN, "feed.xml"), "rel": "self", "type": "application/rss+xml"})
+    for post in posts:
+        item = ET.SubElement(channel, "item")
+        canonical = urljoin(ORIGIN, f"insights/{post['slug']}/")
+        ET.SubElement(item, "title").text = str(post["title"])
+        ET.SubElement(item, "link").text = canonical
+        ET.SubElement(item, "guid", {"isPermaLink": "true"}).text = canonical
+        ET.SubElement(item, "description").text = str(post["excerpt"])
+        ET.SubElement(item, "category").text = str(post["category"])
+        ET.SubElement(item, "pubDate").text = datetime.combine(post["published"], datetime.min.time(), tzinfo=timezone.utc).strftime("%a, %d %b %Y %H:%M:%S +0000")
+    ET.indent(rss, space="  ")
+    return ET.tostring(rss, encoding="utf-8", xml_declaration=True)
+
+
 def extract_shared_markup() -> tuple[str, str]:
     sample = (ROOT / "ai-search-readiness.html").read_text(encoding="utf-8")
     header_match = re.search(r'<header id="movex-global-header".*?</header>', sample, re.S)
@@ -241,7 +299,8 @@ def build() -> None:
         content = page.read_text(encoding="utf-8")
         if legacy_origin in content:
             content = content.replace(legacy_origin, ORIGIN)
-            page.write_text(content, encoding="utf-8")
+        content = ensure_page_metadata(page, content)
+        page.write_text(content, encoding="utf-8")
     for public_file in ("robots.txt",):
         source = ROOT / public_file
         if source.exists():
@@ -282,6 +341,7 @@ def build() -> None:
             ET.SubElement(url, f"{{{SITEMAP_NS}}}lastmod").text = str(lastmod)
     ET.indent(urlset, space="  ")
     (DIST / "sitemap.xml").write_bytes(ET.tostring(urlset, encoding="utf-8", xml_declaration=True))
+    (DIST / "feed.xml").write_bytes(generate_rss(posts))
     (DIST / ".nojekyll").touch()
     print(f"Built {len(list(DIST.glob('*.html')))} static pages and {len(posts)} published articles into {DIST}")
 
