@@ -1,0 +1,25 @@
++++
+title = "A useful, specific article title"
+slug = "useful-specific-article-title"
+date = "2026-11-08"
+modified = "2026-11-08"
+description = "A concise search snippet that describes the answer this article provides."
+excerpt = "A short summary that helps readers decide whether this guide is for them."
+category = "SEO & Local Visibility"
+topic = "search"
+read_minutes = 7
+image = "assets/blog/article-cover.webp"
+image_alt = "Describe the actual subject and useful context in the image"
+tags = ["Local SEO", "Google Business Profile"]
+status = "published"
++++
+
+Start with the reader's problem and answer it clearly.
+
+## Explain the first useful step
+
+Write practical, original advice. Link to relevant [MoveX services](seo.html) where it helps the reader.
+
+- Keep headings descriptive.
+- Use evidence and specific examples.
+- Add a next step that matches the topic.
