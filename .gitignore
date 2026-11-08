@@ -4,3 +4,6 @@ __pycache__/
 cloudflare/wrangler.toml
 cloudflare/.dev.vars
 node_modules/
+
+cloudflare/.admin-login.txt
+cloudflare/.wrangler/

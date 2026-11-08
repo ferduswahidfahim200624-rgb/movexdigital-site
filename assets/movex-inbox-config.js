@@ -1,2 +1,3 @@
-/* Set this to the deployed Worker URL, for example https://movexdigital-private-inbox.<account>.workers.dev */
-window.MOVEX_INBOX_API = '';
+/* Public Worker endpoint; no credentials here. */
+window.MOVEX_INBOX_API = 'https://movexdigital-private-inbox.movexdigital.workers.dev';
+

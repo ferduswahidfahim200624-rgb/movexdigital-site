@@ -1,5 +1,15 @@
 # Private forms inbox (Cloudflare Workers + D1)
 
+## Current deployment
+
+- Worker: `movexdigital-private-inbox`
+- Public API: `https://movexdigital-private-inbox.movexdigital.workers.dev`
+- D1 database: `movexdigital-inbox` (APAC)
+- Schema migration applied: `0001_private_inbox.sql`
+- Admin sign-in: `https://www.movexdigital.site/admin/`
+
+The Worker is deployed in the MoveX Cloudflare account. `assets/movex-inbox-config.js` contains only the public API URL. Admin passwords and the token signing secret are Cloudflare Worker secrets. The initial admin credentials are stored only in the ignored local file `cloudflare/.admin-login.txt`; do not commit or share that file. The first admin is `ferdouswahidfahim24@gmail.com`.
+
 This adds a private database-backed inbox without Supabase. GitHub Pages remains the public static host; the Worker accepts form submissions and D1 stores them. The public pages contain no database credentials or admin passwords.
 
 ## What it provides
@@ -21,7 +31,7 @@ Run these commands from this `cloudflare/` folder with Node.js/npm installed. Wr
 5. Add one or more admin email/password pairs as a Cloudflare secret. Run `npx wrangler secret put ADMIN_USERS_JSON` and paste JSON such as `[ {"email":"you@example.com","password":"a-long-unique-password"} ]`. Add additional objects for additional admins. Use unique strong passwords.
 6. Create a random signing secret (PowerShell): `[Convert]::ToBase64String([Security.Cryptography.RandomNumberGenerator]::GetBytes(48))`. Run `npx wrangler secret put ADMIN_JWT_SECRET` and paste that generated value.
 7. Deploy the API: `npx wrangler deploy --config wrangler.toml`. Copy the `workers.dev` URL shown by Wrangler.
-8. Put that URL in `assets/movex-inbox-config.js` as `window.MOVEX_INBOX_API = 'https://YOUR-WORKER.YOUR-ACCOUNT.workers.dev';` and publish the GitHub Pages site.
+8. Put the deployed URL in `assets/movex-inbox-config.js` as `window.MOVEX_INBOX_API = 'https://YOUR-WORKER.YOUR-ACCOUNT.workers.dev';` and publish the GitHub Pages site.
 
 `ALLOWED_ORIGINS` already lists the production domain, GitHub Pages preview, and apex domain. If the site URL changes, update that value and redeploy the Worker. Keep the API URL public; it is not a secret. Passwords and signing keys must remain Cloudflare secrets. To change an admin password, update `ADMIN_USERS_JSON`; rotating `ADMIN_JWT_SECRET` signs out all existing sessions.
 
