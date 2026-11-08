@@ -14,8 +14,8 @@
     consent.className = 'mx-form-consent';
     consent.dataset.mxConsent = 'true';
     consent.innerHTML = kind === 'newsletter'
-      ? '<input type="checkbox" name="consent" required><span>I agree to receive MoveX email updates. I can request removal at any time. See the <a href="privacy-policy.html">Privacy Policy</a>.</span>'
-      : '<input type="checkbox" name="consent" required><span>I agree that MoveX may use these details to respond to my enquiry. See the <a href="privacy-policy.html">Privacy Policy</a>.</span>';
+      ? '<input type="checkbox" name="consent" required><span>I agree to receive MoveX email updates. I can request removal at any time. See the <a href="/privacy-policy/">Privacy Policy</a>.</span>'
+      : '<input type="checkbox" name="consent" required><span>I agree that MoveX may use these details to respond to my enquiry. See the <a href="/privacy-policy/">Privacy Policy</a>.</span>';
     var button = form.querySelector('button[type="submit"]');
     if (button) button.before(consent);
     else form.appendChild(consent);
@@ -85,9 +85,9 @@
       });
       var result = await response.json().catch(function () { return {}; });
       if (!response.ok || !result.ok) throw new Error(result.error || 'send_failed');
-      setStatus(form, result.message || (type === 'lead' ? 'Thanks — your enquiry is in. We’ll be in touch.' : 'Thanks — you’re on the MoveX update list.'), false);
-      form.reset();
       if (window.dataLayer) window.dataLayer.push({ event: type === 'lead' ? 'contact_form_submit' : 'newsletter_submit', form_id: form.id || 'newsletter', form_type: type });
+      // Only navigate after the Worker confirms the submission was stored.
+      window.location.assign('/thank-you/?type=' + encodeURIComponent(type));
     } catch (_) {
       setStatus(form, 'We could not save this just now. Please try again or email ferdouswahidfahim24@gmail.com.', true);
     } finally {
