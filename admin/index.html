@@ -18,11 +18,44 @@
       <form id="login-form" class="login-card"><span class="eyebrow">SECURE SIGN IN</span><h2>Welcome back.</h2><p>Use your admin account to open the MoveX inbox.</p><label for="login-email">Admin email</label><input id="login-email" name="email" type="email" autocomplete="username" required><label for="login-password">Password</label><input id="login-password" name="password" type="password" autocomplete="current-password" required><button class="button primary" type="submit">Sign in <span>↗</span></button><p class="form-message" id="login-message" aria-live="polite"></p></form>
     </section>
     <section id="dashboard-view" hidden>
+      <nav class="admin-tabs" aria-label="Admin sections"><button class="admin-tab is-active" data-admin-panel="overview" type="button">Overview</button><button class="admin-tab" data-admin-panel="media" type="button">MoveX Media <span>Blog studio</span></button></nav>
+      <div id="overview-panel">
       <div class="page-heading"><div><span class="eyebrow">MOVEX DIGITAL · INBOX</span><h1>Enquiries &amp; subscribers</h1><p>Every submission, ready for a thoughtful next step.</p></div><button id="refresh" class="button subtle">Refresh data ↻</button></div>
       <div class="stats-row"><article><span>NEW ENQUIRIES</span><strong id="new-count">—</strong><small>Need a first response</small></article><article><span>ALL ENQUIRIES</span><strong id="lead-count">—</strong><small>Saved in your private inbox</small></article><article><span>NEWSLETTER</span><strong id="subscriber-count">—</strong><small>Consented email updates</small></article></div>
       <div class="data-panel"><div class="panel-heading"><div><span class="eyebrow">FOLLOW UP</span><h2>Lead enquiries</h2></div><div class="panel-tools"><input id="lead-search" type="search" placeholder="Search leads" aria-label="Search leads"><button class="button subtle" id="export-leads">Export CSV</button></div></div><div class="table-wrap"><table><thead><tr><th>Contact</th><th>Service &amp; project</th><th>Received</th><th>Status</th></tr></thead><tbody id="lead-rows"><tr><td colspan="4" class="empty">Sign in to load leads.</td></tr></tbody></table></div></div>
       <div class="data-panel subscribers-panel"><div class="panel-heading"><div><span class="eyebrow">MOVE X BRIEF</span><h2>Newsletter subscribers</h2></div><div class="panel-tools"><input id="subscriber-search" type="search" placeholder="Search email" aria-label="Search newsletter email"><button class="button subtle" id="export-subscribers">Export CSV</button></div></div><div class="table-wrap"><table><thead><tr><th>Email</th><th>Source page</th><th>Consent recorded</th><th>Status</th></tr></thead><tbody id="subscriber-rows"><tr><td colspan="4" class="empty">Sign in to load subscribers.</td></tr></tbody></table></div></div>
       <p id="dashboard-message" class="dashboard-message" aria-live="polite"></p>
+      </div>
+      <section id="media-panel" class="media-admin" hidden>
+        <div class="page-heading"><div><span class="eyebrow">MOVEX MEDIA · PUBLISHING</span><h1>Blog studio</h1><p>Write, preview, save drafts, and publish search-ready articles.</p></div><button id="new-article" class="button primary article-new" type="button">New article <span>＋</span></button></div>
+        <div class="media-admin-grid">
+          <aside class="data-panel article-library"><div class="panel-heading"><div><span class="eyebrow">YOUR LIBRARY</span><h2>Articles</h2></div><button id="refresh-articles" class="button subtle" type="button">Refresh</button></div><div id="article-list" class="article-list"><p class="empty">Sign in to load articles.</p></div></aside>
+          <div class="article-workspace">
+            <form id="article-form" class="data-panel article-form">
+              <div class="article-form-top"><div><span class="eyebrow" id="article-state-label">NEW DRAFT</span><h2 id="article-form-title">Create an article</h2></div><span id="article-status" class="article-status">DRAFT</span></div>
+              <input id="article-id" type="hidden">
+              <div class="article-fields">
+                <label class="field-wide">Article title<input id="article-title" required maxlength="180" placeholder="A specific, useful headline"></label>
+                <label>URL slug<input id="article-slug" required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" maxlength="90" placeholder="clear-search-friendly-slug"></label>
+                <label>Publish date<input id="article-date" type="date" required></label>
+                <label class="field-wide">Search description<textarea id="article-description" rows="2" maxlength="220" required placeholder="A clear description for search results (up to 220 characters)."></textarea></label>
+                <label class="field-wide">Article summary<textarea id="article-excerpt" rows="2" maxlength="360" required placeholder="The practical value readers get from this article."></textarea></label>
+                <label>Category<input id="article-category" required placeholder="Search &amp; AI"></label>
+                <label>Topic<select id="article-topic"><option value="strategy">Business strategy</option><option value="search">Search &amp; AI</option><option value="paid-media">Paid media</option><option value="web">Web &amp; conversion</option><option value="operations">Automation &amp; analytics</option></select></label>
+                <label>Reading time (minutes)<input id="article-read-minutes" type="number" min="1" max="60" value="6"></label>
+                <label>Cover image path<input id="article-image" required placeholder="assets/blog/article-cover.webp"></label>
+                <label class="field-wide">Image alt text<input id="article-image-alt" required maxlength="240" placeholder="Describe what readers can see in this image."></label>
+                <label class="field-wide">Tags <span class="field-hint">Separate with commas</span><input id="article-tags" placeholder="Google Ads, conversion tracking"></label>
+              </div>
+              <div class="editor-heading"><div><span class="eyebrow">ARTICLE BODY</span><h3>Write in Markdown</h3><p>Use the toolbar for headings, emphasis, lists and links. Preview before publishing.</p></div><button id="toggle-preview" class="button subtle" type="button" aria-pressed="false">Show preview</button></div>
+              <div class="markdown-toolbar" role="toolbar" aria-label="Article formatting"><button type="button" data-insert="heading">H2</button><button type="button" data-insert="bold"><b>B</b></button><button type="button" data-insert="italic"><i>I</i></button><button type="button" data-insert="bullets">• List</button><button type="button" data-insert="numbered">1. List</button><button type="button" data-insert="link">Link</button><span>Markdown is converted into crawlable article pages at publish time.</span></div>
+              <div class="article-editor-layout"><label class="body-editor-label" for="article-body">Article content<textarea id="article-body" required spellcheck="true" placeholder="# Start with the reader’s real question\n\nExplain the issue clearly, then give a practical sequence readers can follow."></textarea></label><article id="article-preview" class="article-preview" aria-label="Live article preview" hidden><span class="eyebrow">PREVIEW</span><div id="article-preview-content"></div></article></div>
+              <div class="article-form-actions"><p id="article-message" class="form-message" aria-live="polite"></p><div><button id="delete-article" class="button danger" type="button" hidden>Delete draft</button><button id="save-article" class="button subtle" type="submit">Save draft</button><button id="publish-article" class="button primary" type="button">Publish article <span>↗</span></button></div></div>
+              <p class="publish-note">Publishing writes the article to the private CMS, commits its public Markdown source to GitHub, then rebuilds the SEO-ready page, media listing, sitemap and feed.</p>
+            </form>
+          </div>
+        </div>
+      </section>
     </section>
     <footer><span>MoveX Digital · Private workspace</span><a href="../privacy-policy.html">Privacy Policy</a></footer>
   </main>

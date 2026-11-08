@@ -17,7 +17,7 @@ function corsHeaders(request, env) {
   if (!allowedOrigins(env).includes(origin)) return null;
   return {
     'access-control-allow-origin': origin,
-    'access-control-allow-methods': 'GET,POST,PATCH,OPTIONS',
+    'access-control-allow-methods': 'GET,POST,PUT,PATCH,DELETE,OPTIONS',
     'access-control-allow-headers': 'Content-Type,Authorization',
     'access-control-max-age': '86400',
     vary: 'Origin',
@@ -94,10 +94,128 @@ function validEmail(value) {
   return value.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
-async function readJson(request) {
+async function readJson(request, maxBytes = 12000) {
   const length = Number(request.headers.get('content-length') || 0);
-  if (length > 12000) throw new Error('payload_too_large');
-  return request.json();
+  if (length > maxBytes) throw new Error('payload_too_large');
+  const raw = await request.text();
+  if (new TextEncoder().encode(raw).length > maxBytes) throw new Error('payload_too_large');
+  return JSON.parse(raw);
+}
+
+function articleInput(input) {
+  const slug = clean(input.slug, 90).toLowerCase();
+  const tags = Array.isArray(input.tags) ? input.tags.slice(0, 12).map((tag) => clean(tag, 50)).filter(Boolean) : [];
+  const article = {
+    slug,
+    title: clean(input.title, 180),
+    date: clean(input.date, 10),
+    description: clean(input.description, 220),
+    excerpt: clean(input.excerpt, 360),
+    category: clean(input.category, 80),
+    topic: clean(input.topic, 40).toLowerCase() || 'strategy',
+    read_minutes: Math.min(Math.max(Number(input.read_minutes) || 6, 1), 60),
+    image: clean(input.image, 500),
+    image_alt: clean(input.image_alt, 240),
+    tags_json: JSON.stringify(tags),
+    body_md: String(input.body_md || '').slice(0, 80000),
+  };
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return { error: 'invalid_slug' };
+  if (!article.title || !/^\d{4}-\d{2}-\d{2}$/.test(article.date) || !article.description || !article.excerpt || !article.category || !article.image || !article.image_alt || !article.body_md.trim()) return { error: 'required_article_fields_missing' };
+  return article;
+}
+
+function tomlString(value) { return JSON.stringify(String(value)); }
+
+function articleMarkdown(article) {
+  const tags = JSON.parse(article.tags_json || '[]');
+  return [
+    '+++',
+    `title = ${tomlString(article.title)}`,
+    `slug = ${tomlString(article.slug)}`,
+    `date = ${tomlString(article.date)}`,
+    `modified = ${tomlString(String(article.updated_at || '').slice(0, 10) || article.date)}`,
+    `description = ${tomlString(article.description)}`,
+    `excerpt = ${tomlString(article.excerpt)}`,
+    `category = ${tomlString(article.category)}`,
+    `topic = ${tomlString(article.topic)}`,
+    `read_minutes = ${Number(article.read_minutes) || 6}`,
+    `image = ${tomlString(article.image)}`,
+    `image_alt = ${tomlString(article.image_alt)}`,
+    `tags = ${JSON.stringify(tags)}`,
+    'status = "published"',
+    '+++',
+    '',
+    article.body_md.trim(),
+    '',
+  ].join('\n');
+}
+
+function base64Utf8(value) {
+  const bytes = new TextEncoder().encode(value);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return btoa(binary);
+}
+
+async function githubRequest(path, env, options = {}) {
+  return fetch(`https://api.github.com/repos/${env.GITHUB_REPOSITORY}${path}`, {
+    ...options,
+    headers: {
+      accept: 'application/vnd.github+json',
+      authorization: `Bearer ${env.GITHUB_CONTENTS_TOKEN}`,
+      'x-github-api-version': '2022-11-28',
+      'user-agent': 'MoveX-Digital-CMS',
+      ...(options.headers || {}),
+    },
+  });
+}
+
+async function saveArticle(request, env, user, id = null) {
+  let input;
+  try { input = await readJson(request, 100000); } catch (_) { return json({ error: 'invalid_request' }, 400); }
+  const article = articleInput(input);
+  if (article.error) return json({ error: article.error }, 400);
+  const duplicate = await env.DB.prepare('SELECT id,status FROM media_articles WHERE slug = ?').bind(article.slug).first();
+  if (duplicate && Number(duplicate.id) !== Number(id || 0)) return json({ error: 'slug_already_exists' }, 409);
+  if (id) {
+    const previous = await env.DB.prepare('SELECT slug,status FROM media_articles WHERE id = ?').bind(id).first();
+    if (!previous) return json({ error: 'not_found' }, 404);
+    if (previous.status === 'published' && previous.slug !== article.slug) return json({ error: 'published_slug_locked' }, 409);
+    await env.DB.prepare(`UPDATE media_articles SET slug=?,title=?,date=?,description=?,excerpt=?,category=?,topic=?,read_minutes=?,image=?,image_alt=?,tags_json=?,body_md=?,updated_at=strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE id=?`)
+      .bind(article.slug, article.title, article.date, article.description, article.excerpt, article.category, article.topic, article.read_minutes, article.image, article.image_alt, article.tags_json, article.body_md, id).run();
+    const saved = await env.DB.prepare('SELECT * FROM media_articles WHERE id = ?').bind(id).first();
+    return json({ item: saved }, 200);
+  }
+  const result = await env.DB.prepare(`INSERT INTO media_articles (slug,title,date,description,excerpt,category,topic,read_minutes,image,image_alt,tags_json,body_md,created_by) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`)
+    .bind(article.slug, article.title, article.date, article.description, article.excerpt, article.category, article.topic, article.read_minutes, article.image, article.image_alt, article.tags_json, article.body_md, user.sub).run();
+  const saved = await env.DB.prepare('SELECT * FROM media_articles WHERE id = ?').bind(result.meta.last_row_id).first();
+  return json({ item: saved }, 201);
+}
+
+async function publishArticle(id, env) {
+  if (!env.GITHUB_REPOSITORY || !env.GITHUB_CONTENTS_TOKEN) return json({ error: 'github_publisher_not_configured' }, 503);
+  const article = await env.DB.prepare('SELECT * FROM media_articles WHERE id = ?').bind(id).first();
+  if (!article) return json({ error: 'not_found' }, 404);
+  const path = `/contents/content/articles/${article.slug}.md`;
+  const existing = await githubRequest(path, env, { method: 'GET' });
+  let existingSha = '';
+  if (existing.ok) existingSha = (await existing.json()).sha || '';
+  else if (existing.status !== 404) return json({ error: 'github_read_failed' }, 502);
+  const response = await githubRequest(path, env, {
+    method: 'PUT',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({
+      message: `${existingSha ? 'Update' : 'Publish'} MoveX Media: ${article.title}`,
+      content: base64Utf8(articleMarkdown(article)),
+      branch: env.GITHUB_BRANCH || 'main',
+      ...(existingSha ? { sha: existingSha } : {}),
+    }),
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) return json({ error: response.status === 409 ? 'github_content_conflict' : 'github_publish_failed' }, 502);
+  await env.DB.prepare(`UPDATE media_articles SET status='published',github_sha=?,published_at=COALESCE(published_at,strftime('%Y-%m-%dT%H:%M:%fZ','now')),updated_at=strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE id=?`)
+    .bind(result.content?.sha || '', id).run();
+  return json({ ok: true, url: `https://www.movexdigital.site/insights/${article.slug}/`, commit: result.commit?.html_url || '' }, 200);
 }
 
 async function login(request, env, cors) {
@@ -186,6 +304,23 @@ async function adminRoute(request, env, url, cors) {
     const limit = Math.min(Math.max(Number(url.searchParams.get('limit') || 500), 1), 1000);
     const rows = await env.DB.prepare('SELECT id,email,source_page,consented_at,status FROM newsletter_subscribers ORDER BY id DESC LIMIT ?').bind(limit).all();
     return json({ items: rows.results || [] }, 200, cors);
+  }
+  if (url.pathname === '/api/admin/articles' && request.method === 'GET') {
+    const rows = await env.DB.prepare('SELECT id,slug,title,date,category,status,updated_at,published_at FROM media_articles ORDER BY updated_at DESC LIMIT 200').all();
+    return json({ items: rows.results || [] }, 200, cors);
+  }
+  if (url.pathname === '/api/admin/articles' && request.method === 'POST') return saveArticle(request, env, user);
+  const articlePublishMatch = url.pathname.match(/^\/api\/admin\/articles\/(\d+)\/publish$/);
+  if (articlePublishMatch && request.method === 'POST') return publishArticle(Number(articlePublishMatch[1]), env);
+  const articleMatch = url.pathname.match(/^\/api\/admin\/articles\/(\d+)$/);
+  if (articleMatch && request.method === 'GET') {
+    const item = await env.DB.prepare('SELECT * FROM media_articles WHERE id = ?').bind(Number(articleMatch[1])).first();
+    return item ? json({ item }, 200, cors) : json({ error: 'not_found' }, 404, cors);
+  }
+  if (articleMatch && request.method === 'PUT') return saveArticle(request, env, user, Number(articleMatch[1]));
+  if (articleMatch && request.method === 'DELETE') {
+    const result = await env.DB.prepare("DELETE FROM media_articles WHERE id = ? AND status = 'draft'").bind(Number(articleMatch[1])).run();
+    return result.meta?.changes ? json({ ok: true }, 200, cors) : json({ error: 'draft_not_found' }, 404, cors);
   }
   const statusMatch = url.pathname.match(/^\/api\/admin\/leads\/(\d+)$/);
   if (statusMatch && request.method === 'PATCH') {

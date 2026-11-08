@@ -12,3 +12,5 @@ migrations_dir = "migrations"
 [vars]
 ALLOWED_ORIGINS = "https://www.movexdigital.site,https://movexdigital.site,https://ferduswahidfahim200624-rgb.github.io"
 TOKEN_TTL_SECONDS = "43200"
+GITHUB_REPOSITORY = "ferduswahidfahim200624-rgb/movexdigital-site"
+GITHUB_BRANCH = "main"
