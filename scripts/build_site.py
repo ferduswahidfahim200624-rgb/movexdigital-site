@@ -17,6 +17,7 @@ import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
 DIST = ROOT / "dist"
+CF_WEB_ANALYTICS = "<!-- Cloudflare Web Analytics --><script defer src=\"https://static.cloudflareinsights.com/beacon.min.js\" data-cf-beacon='{" + '"token":"bbc7071c8c9485b8334cd715a3158927"' + "}'></script><!-- End Cloudflare Web Analytics -->"
 CONTENT = ROOT / "content" / "articles"
 ORIGIN = "https://www.movexdigital.site/"
 SITEMAP_NS = "http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -399,6 +400,16 @@ def build() -> None:
     page_html = re.sub(r'<span class="media-latest-badge"[^>]*>.*?</span>', '', page_html, flags=re.S)
     page_html = page_html.replace(marker, cards)
     insights.write_text(page_html, encoding="utf-8")
+
+    # Add Cloudflare's privacy-friendly Web Analytics beacon to all public
+    # rendered pages. Keep the authenticated admin area out of public analytics.
+    for page in DIST.rglob("*.html"):
+        if "admin" in page.relative_to(DIST).parts:
+            continue
+        content = page.read_text(encoding="utf-8")
+        if "static.cloudflareinsights.com/beacon.min.js" not in content:
+            content = content.replace("</body>", f"{CF_WEB_ANALYTICS}</body>")
+            page.write_text(content, encoding="utf-8")
 
     urls: dict[str, str | None] = {ORIGIN: None}
     for page in sorted(ROOT.glob("*.html")):
