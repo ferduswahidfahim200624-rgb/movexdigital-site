@@ -35,8 +35,8 @@
     }
   }
 
-  var lead = document.getElementById('homepage-contact-form');
-  if (lead) insertPrivacyAndTrap(lead, 'lead');
+  var leads = document.querySelectorAll('#homepage-contact-form, [data-mx-lead-form]');
+  leads.forEach(function (lead) { insertPrivacyAndTrap(lead, 'lead'); });
   document.querySelectorAll('.mx-newsletter, #mx-page-newsletter, #footer-newsletter-form').forEach(function (form) {
     insertPrivacyAndTrap(form, 'newsletter');
   });
@@ -99,7 +99,7 @@
   document.addEventListener('submit', function (event) {
     var form = event.target;
     if (!(form instanceof HTMLFormElement)) return;
-    var isLead = form.id === 'homepage-contact-form';
+    var isLead = form.id === 'homepage-contact-form' || form.hasAttribute('data-mx-lead-form');
     var isNewsletter = form.matches('.mx-newsletter, #mx-page-newsletter, #footer-newsletter-form');
     if (!isLead && !isNewsletter) return;
     event.preventDefault();
