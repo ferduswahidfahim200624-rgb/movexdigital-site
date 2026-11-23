@@ -1,74 +1,9 @@
-# ═══════════════════════════════════════════════════════════════════
-# MoveX Digital — Multi-Device Workspace .gitignore
-# Strategy:
-#   - GitHub syncs: Code, HTML/CSS/JS, lightweight web images, GEMINI.md,
-#     .antigravity/rules.md, .antigravity/skills/, and scripts/
-#   - Google Drive syncs: Heavy raw design/video assets (*.psd, *.ai, *.mp4, *.mov, *.zip)
-# ═══════════════════════════════════════════════════════════════════
-
-# 1. OS & Editor Junk Files (Prevents Google Drive + Git file-lock conflicts)
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-Desktop.ini
-~$*
-*.tmp
-*.temp
-*.swp
-*.swo
-
-# 2. Dependencies & Build Artifacts
-node_modules/
-.pnp/
-.pnp.js
 dist/
-build/
-.cache/
-.vercel/
-.netlify/
-.wrangler/
+__pycache__/
+*.py[cod]
+cloudflare/wrangler.toml
+cloudflare/.dev.vars
+node_modules/
 
-# 3. Environment & Local Secrets
-.env
-.env.local
-.env.*.local
-*.pem
-*.key
-
-# 4. Heavy Raw Design, Video & Archive Files (Handled by Google Drive, NOT GitHub)
-*.psd
-*.psb
-*.ai
-*.eps
-*.indd
-*.fig
-*.sketch
-*.mp4
-*.mov
-*.avi
-*.mkv
-*.webm
-*.wav
-*.zip
-*.rar
-*.7z
-*.tar.gz
-*.exe
-*.dmg
-*.pkg
-
-# 5. Explicitly Track Core AI Memory, Rules & Skills
-!GEMINI.md
-!MEMORY_LOG.md
-!.antigravity/
-!.antigravity/rules.md
-!.antigravity/skills/
-!.antigravity/skills/*.md
-!scripts/
-!scripts/sync-all.ps1
-!scripts/sync-all.sh
-!scripts/auto-watch.ps1
+cloudflare/.admin-login.txt
+cloudflare/.wrangler/
