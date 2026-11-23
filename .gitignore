@@ -63,6 +63,7 @@ build/
 
 # 5. Explicitly Track Core AI Memory, Rules & Skills
 !GEMINI.md
+!MEMORY_LOG.md
 !.antigravity/
 !.antigravity/rules.md
 !.antigravity/skills/
@@ -70,3 +71,4 @@ build/
 !scripts/
 !scripts/sync-all.ps1
 !scripts/sync-all.sh
+!scripts/auto-watch.ps1
