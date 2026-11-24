@@ -85,7 +85,18 @@
       });
       var result = await response.json().catch(function () { return {}; });
       if (!response.ok || !result.ok) throw new Error(result.error || 'send_failed');
-      if (window.dataLayer) window.dataLayer.push({ event: type === 'lead' ? 'contact_form_submit' : 'newsletter_submit', form_id: form.id || 'newsletter', form_type: type });
+      // Store confirmed conversion payload (zero PII) so /thank-you/ fires a single
+      // deduplicated generate_lead / newsletter_signup dataLayer event without drop or double-count.
+      try {
+        var eventId = 'mx_' + type + '_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+        window.sessionStorage.setItem('mx_pending_conversion', JSON.stringify({
+          type: type,
+          event_id: eventId,
+          form_id: form.id || (type === 'lead' ? 'service_enquiry_form' : 'newsletter_form'),
+          service_name: type === 'lead' ? String(payload.service || 'not_selected') : undefined,
+          source_page: window.location.pathname
+        }));
+      } catch (_) {}
       // Only navigate after the Worker confirms the submission was stored.
       window.location.assign('/thank-you/?type=' + encodeURIComponent(type));
     } catch (_) {
