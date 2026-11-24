@@ -21,9 +21,18 @@ CF_WEB_ANALYTICS = "<!-- Cloudflare Web Analytics --><script defer src=\"https:/
 GTM_ID = "GTM-P5NBMVS6"
 GTM_HEAD = (
     "<!-- Google Tag Manager -->"
-    "<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});"
-    "var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;"
-    "j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);"
+    "<script>(function(w,d,s,l,i){w[l]=w[l]||[];var loaded=false;"
+    "function loadGTM(){if(loaded)return;loaded=true;"
+    "w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});"
+    "var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';"
+    "j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;"
+    "f.parentNode.insertBefore(j,f);}"
+    "var imm=/^\\/thank-you(\\/|$)/.test(location.pathname)||/[?&](gtm_debug|gclid|wbraid|gbraid|fbclid)=/i.test(location.search);"
+    "if(imm){loadGTM();return;}"
+    "['pointerdown','keydown','scroll','touchstart','mousemove'].forEach(function(ev){"
+    "w.addEventListener(ev,loadGTM,{once:true,passive:true});});"
+    "if(d.readyState==='complete'){setTimeout(loadGTM,5500);}"
+    "else{w.addEventListener('load',function(){setTimeout(loadGTM,5500);},{once:true});}"
     f"}})(window,document,'script','dataLayer','{GTM_ID}');</script>"
     "<!-- End Google Tag Manager -->"
 )
@@ -450,11 +459,11 @@ def generate_rss(posts: list[dict]) -> bytes:
 
 
 def extract_shared_markup() -> tuple[str, str]:
-    sample = (ROOT / "ai-search-readiness.html").read_text(encoding="utf-8")
+    sample = (ROOT / "index.html").read_text(encoding="utf-8")
     header_match = re.search(r'<header id="movex-global-header".*?</header>', sample, re.S)
     footer_match = re.search(r'<footer id="movex-global-footer".*?</footer>', sample, re.S)
     if not header_match or not footer_match:
-        fail("could not find the current shared header/footer in ai-search-readiness.html")
+        fail("could not find the current shared header/footer in index.html")
     return header_match.group(0), footer_match.group(0)
 
 
@@ -482,7 +491,7 @@ if(submissionType==='newsletter'){{document.getElementById('thanks-title').textC
 PERF_IMG_MAP = {
     "/assets/home-growth-collage.png": (
         "/assets/home-growth-collage.webp",
-        'srcset="/assets/home-growth-collage-sm.webp 480w, /assets/home-growth-collage.webp 720w" sizes="(max-width: 760px) 92vw, 560px" width="720" height="627" fetchpriority="high" decoding="async"',
+        'srcset="/assets/home-growth-collage-sm.webp 480w, /assets/home-growth-collage.webp 720w" sizes="(max-width: 760px) 92vw, 560px" width="720" height="627" fetchpriority="high" decoding="sync"',
     ),
     "/assets/google-ads-account-dashboard.png": (
         "/assets/google-ads-account-dashboard.webp",
@@ -490,7 +499,7 @@ PERF_IMG_MAP = {
     ),
     "/assets/movex-media-space-hero.png": (
         "/assets/movex-media-space-hero.webp",
-        'srcset="/assets/movex-media-space-hero-sm.webp 560w, /assets/movex-media-space-hero.webp 1024w" sizes="(max-width: 760px) 92vw, 1024px" width="1024" height="576" fetchpriority="high" decoding="async"',
+        'srcset="/assets/movex-media-space-hero-sm.webp 560w, /assets/movex-media-space-hero.webp 1024w" sizes="(max-width: 760px) 92vw, 1024px" width="1024" height="576" fetchpriority="high" decoding="sync"',
     ),
     "/assets/team/movex-human-ai-team.png": (
         "/assets/team/movex-human-ai-team.webp",
@@ -727,17 +736,38 @@ def build() -> None:
 
     # Add Cloudflare's privacy-friendly Web Analytics beacon to all public
     # rendered pages. Keep the authenticated admin area out of public analytics.
+    # Enforce one uniform global header & footer across all public pages and inject
+    # our performance-optimized GTM loader cleanly before </head> (never blocking LCP).
+    canonical_header = rewrite_pretty_urls(header)
+    canonical_footer = rewrite_pretty_urls(footer)
     inline_css = optimize_dist_assets(DIST / "assets")
     for page in DIST.rglob("*.html"):
         if "admin" in page.relative_to(DIST).parts:
             continue
         content = page.read_text(encoding="utf-8")
+        if 'http-equiv="refresh"' not in content.lower():
+            if '<header id="movex-global-header"' in content:
+                content = re.sub(
+                    r'<header id="movex-global-header".*?</header>',
+                    lambda _m: canonical_header,
+                    content,
+                    count=1,
+                    flags=re.S,
+                )
+            if '<footer id="movex-global-footer"' in content:
+                content = re.sub(
+                    r'<footer id="movex-global-footer".*?</footer>',
+                    lambda _m: canonical_footer,
+                    content,
+                    count=1,
+                    flags=re.S,
+                )
         content = optimize_performance_html(content, inline_css)
         if 'http-equiv="refresh"' not in content.lower():
             if GTM_ID not in content:
-                head_open = re.search(r"<head\b[^>]*>", content, re.I)
-                if head_open:
-                    content = content[:head_open.end()] + "\n" + GTM_HEAD + "\n" + content[head_open.end():]
+                head_close = re.search(r"</head\s*>", content, re.I)
+                if head_close:
+                    content = content[:head_close.start()] + "\n" + GTM_HEAD + "\n" + content[head_close.start():]
                 body_open = re.search(r"<body\b[^>]*>", content, re.I)
                 if body_open:
                     content = content[:body_open.end()] + "\n" + GTM_NOSCRIPT + "\n" + content[body_open.end():]
