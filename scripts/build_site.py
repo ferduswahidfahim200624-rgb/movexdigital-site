@@ -18,6 +18,21 @@ import xml.etree.ElementTree as ET
 ROOT = Path(__file__).resolve().parents[1]
 DIST = ROOT / "dist"
 CF_WEB_ANALYTICS = "<!-- Cloudflare Web Analytics --><script defer src=\"https://static.cloudflareinsights.com/beacon.min.js\" data-cf-beacon='{" + '"token":"bbc7071c8c9485b8334cd715a3158927"' + "}'></script><!-- End Cloudflare Web Analytics -->"
+GTM_ID = "GTM-P5NBMVS6"
+GTM_HEAD = (
+    "<!-- Google Tag Manager -->"
+    "<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});"
+    "var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;"
+    "j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);"
+    f"}})(window,document,'script','dataLayer','{GTM_ID}');</script>"
+    "<!-- End Google Tag Manager -->"
+)
+GTM_NOSCRIPT = (
+    "<!-- Google Tag Manager (noscript) -->"
+    f'<noscript><iframe src="https://www.googletagmanager.com/ns.html?id={GTM_ID}" '
+    'height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>'
+    "<!-- End Google Tag Manager (noscript) -->"
+)
 CONTENT = ROOT / "content" / "articles"
 ORIGIN = "https://www.movexdigital.site/"
 SITEMAP_NS = "http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -464,179 +479,6 @@ if(submissionType==='newsletter'){{document.getElementById('thanks-title').textC
 </script></body></html>'''
 
 
-PERF_IMG_MAP = {
-    "/assets/home-growth-collage.png": (
-        "/assets/home-growth-collage.webp",
-        'srcset="/assets/home-growth-collage-sm.webp 480w, /assets/home-growth-collage.webp 720w" sizes="(max-width: 760px) 92vw, 560px" width="720" height="627" fetchpriority="high" decoding="async"',
-    ),
-    "/assets/google-ads-account-dashboard.png": (
-        "/assets/google-ads-account-dashboard.webp",
-        'width="320" height="240" decoding="async"',
-    ),
-    "/assets/movex-media-space-hero.png": (
-        "/assets/movex-media-space-hero.webp",
-        'srcset="/assets/movex-media-space-hero-sm.webp 560w, /assets/movex-media-space-hero.webp 1024w" sizes="(max-width: 760px) 92vw, 1024px" width="1024" height="576" fetchpriority="high" decoding="async"',
-    ),
-    "/assets/team/movex-human-ai-team.png": (
-        "/assets/team/movex-human-ai-team.webp",
-        'srcset="/assets/team/movex-human-ai-team-sm.webp 560w, /assets/team/movex-human-ai-team.webp 1024w" sizes="(max-width: 760px) 92vw, 1024px" width="1024" height="576" loading="lazy" decoding="async"',
-    ),
-    "/assets/service-digital-marketing.png": (
-        "/assets/service-digital-marketing.webp",
-        'srcset="/assets/service-digital-marketing-sm.webp 520w, /assets/service-digital-marketing.webp 960w" sizes="(max-width: 760px) 92vw, 960px" width="960" height="640" loading="lazy" decoding="async"',
-    ),
-    "/assets/team/faiyaz-jusaid-fahim.png": (
-        "/assets/team/faiyaz-jusaid-fahim.webp",
-        'width="180" height="180" loading="lazy" decoding="async"',
-    ),
-    "/assets/team/tanvir-ahmed-roni.jpg": (
-        "/assets/team/tanvir-ahmed-roni.webp",
-        'width="200" height="200" loading="lazy" decoding="async"',
-    ),
-    "/assets/testimonials/lindsay-oleary.png": (
-        "/assets/testimonials/lindsay-oleary.webp",
-        'width="120" height="120" loading="lazy" decoding="async"',
-    ),
-    "/assets/testimonials/joe-barker.png": (
-        "/assets/testimonials/joe-barker.webp",
-        'width="120" height="120" loading="lazy" decoding="async"',
-    ),
-    "/assets/testimonials/bryan-blackwell.png": (
-        "/assets/testimonials/bryan-blackwell.webp",
-        'width="120" height="120" loading="lazy" decoding="async"',
-    ),
-}
-
-A11Y_CONTRAST_CSS = (
-    "<style>"
-    ".service-count,.service-count span,.toolkit-board-head>span,.toolkit-footnote{color:#475569!important}"
-    ".challenge-list>small,.services-fit>small,.progress-watch>small,.challenge-list .mobile-swipe-note,.challenge-option small{color:#475569!important}"
-    ".challenge-option>span{color:#2f3e34!important;background:#dfe3d7!important}"
-    ".challenge-option.active>span{color:#fff!important;background:#ffffff2e!important}"
-    ".challenge-option.active small{color:#f0f9f4!important}"
-    ".service-option.active{background:#12713d!important}"
-    ".service-option.active .option-num,.service-option.active small{color:#fff!important}"
-    "</style>"
-)
-
-
-def _minify_css_str(raw: str) -> str:
-    mini = re.sub(r"/\*[\s\S]*?\*/", "", raw)
-    mini = re.sub(r"\s+", " ", mini)
-    return re.sub(r"\s*([{}:;,>~])\s*", r"\1", mini).replace(";}", "}").strip()
-
-
-def optimize_performance_html(content: str, inline_css: dict[str, str]) -> str:
-    # 1. Logo images: header eager, footer lazy
-    logo_seen = [0]
-
-    def repl_logo(m: re.Match[str]) -> str:
-        tag = m.group(0)
-        logo_seen[0] += 1
-        tag = tag.replace("/assets/movex-digital-logo.png", "/assets/movex-digital-logo.webp")
-        if "width=" not in tag:
-            attrs = ' width="280" height="80" decoding="async"' if logo_seen[0] == 1 else ' width="280" height="80" loading="lazy" decoding="async"'
-            tag = tag[:-1] + attrs + ">"
-        return tag
-
-    content = re.sub(r'<img\b[^>]*src="/assets/movex-digital-logo\.png"[^>]*>', repl_logo, content)
-
-    # 2. Raster images -> WebP + responsive srcset + dimensions + lazy/fetchpriority
-    for old_src, (new_src, extra) in PERF_IMG_MAP.items():
-        if old_src not in content:
-            continue
-        pat = re.compile(r'<img\b[^>]*src="' + re.escape(old_src) + r'"[^>]*>')
-
-        def repl_img(m: re.Match[str], o: str = old_src, n: str = new_src, ex: str = extra) -> str:
-            tag = m.group(0).replace(f'src="{o}"', f'src="{n}"')
-            tag = re.sub(r'\s+(?:width|height|loading|decoding|fetchpriority|srcset|sizes)="[^"]*"', "", tag)
-            return tag[:-1] + " " + ex + ">"
-
-        content = pat.sub(repl_img, content)
-
-    # 3. Async decode on SVG illustrations
-    content = re.sub(
-        r'(<img\b[^>]*src="/assets/service-art/[^"]+\.svg"(?![^>]*decoding=)[^>]*)>',
-        r'\1 decoding="async">',
-        content,
-    )
-
-    # 4. Preload hero LCP images in <head>
-    if "/assets/home-growth-collage.webp" in content and 'rel="preload" as="image" href="/assets/home-growth-collage.webp"' not in content:
-        preload = '<link rel="preload" as="image" href="/assets/home-growth-collage.webp" imagesrcset="/assets/home-growth-collage-sm.webp 480w, /assets/home-growth-collage.webp 720w" imagesizes="(max-width: 760px) 92vw, 560px" fetchpriority="high">'
-        content = content.replace("</head>", f"  {preload}\n</head>", 1)
-    if "/assets/movex-media-space-hero.webp" in content and 'rel="preload" as="image" href="/assets/movex-media-space-hero.webp"' not in content:
-        preload = '<link rel="preload" as="image" href="/assets/movex-media-space-hero.webp" imagesrcset="/assets/movex-media-space-hero-sm.webp 560w, /assets/movex-media-space-hero.webp 1024w" imagesizes="(max-width: 760px) 92vw, 1024px" fetchpriority="high">'
-        content = content.replace("</head>", f"  {preload}\n</head>", 1)
-
-    # 5. Inline critical small stylesheets (header + mobile) to eliminate ALL render-blocking requests
-    for css_name, css_body in inline_css.items():
-        link_pat = re.compile(r'<link\s+rel="stylesheet"\s+href="/assets/' + re.escape(css_name) + r'(?:\?[^"]*)?"\s*/?>')
-        if link_pat.search(content):
-            content = link_pat.sub(lambda _m, b=css_body: f"<style>{b}</style>", content, count=1)
-
-    # 6. Non-render-blocking footer stylesheet
-    old_footer_css = '<link rel="stylesheet" href="/assets/movex-footer.css">'
-    new_footer_css = '<link rel="preload" as="style" href="/assets/movex-footer.css" onload="this.onload=null;this.rel=\'stylesheet\'"><noscript><link rel="stylesheet" href="/assets/movex-footer.css"></noscript>'
-    if old_footer_css in content and new_footer_css not in content:
-        content = content.replace(old_footer_css, new_footer_css, 1)
-
-    # 7. Defer movex-inbox-config.js so it does not sit on the critical path
-    content = content.replace(
-        '<script src="/assets/movex-inbox-config.js"></script>',
-        '<script src="/assets/movex-inbox-config.js" defer></script>',
-    )
-
-    # 8. Fix ARIA roles for 100/100 Accessibility & 2/2 Agentic Browsing
-    content = content.replace(
-        'id="service-options" role="tablist"',
-        'id="service-options"',
-    )
-    content = content.replace(' role="listitem"', "")
-    content = content.replace('class="mobile-service-rail" role="list"', 'class="mobile-service-rail"')
-
-    # 9. Inject WCAG AA contrast overrides
-    if "A11Y_CONTRAST_CSS" not in content and ".service-count,.service-count span" not in content and "</head>" in content:
-        content = content.replace("</head>", f"  {A11Y_CONTRAST_CSS}\n</head>", 1)
-
-    # 10. Guard missing legacy #footer-newsletter-form to prevent console TypeError
-    content = content.replace(
-        "document.getElementById('footer-newsletter-form').addEventListener(",
-        "document.getElementById('footer-newsletter-form')?.addEventListener(",
-    )
-    return content
-
-
-def optimize_dist_assets(dist_assets: Path) -> dict[str, str]:
-    inline_css: dict[str, str] = {}
-    for css_file in dist_assets.glob("*.css"):
-        raw = css_file.read_text(encoding="utf-8")
-        if css_file.name == "movex-footer.css" and "content-visibility" not in raw:
-            raw += "\n#movex-global-footer{content-visibility:auto;contain-intrinsic-size:1px 420px;}\n"
-        mini = _minify_css_str(raw)
-        css_file.write_text(mini, encoding="utf-8")
-        if css_file.name in {"movex-header.css", "movex-mobile.css"}:
-            inline_css[css_file.name] = mini
-    # Remove invalid role="listitem" on <article> in movex-mobile.js (fixes Agentic Browsing 2/2)
-    mobile_js = dist_assets / "movex-mobile.js"
-    if mobile_js.exists():
-        js_txt = mobile_js.read_text(encoding="utf-8")
-        js_txt = js_txt.replace("card.setAttribute('role', 'listitem');", "")
-        js_txt = js_txt.replace('card.setAttribute("role", "listitem");', "")
-        js_txt = js_txt.replace("setAttribute('role','listitem')", "removeAttribute('role')")
-        js_txt = js_txt.replace('setAttribute("role","listitem")', 'removeAttribute("role")')
-        js_txt = js_txt.replace(' role="listitem"', "")
-        js_txt = js_txt.replace(" role='listitem'", "")
-        js_txt = js_txt.replace("rail.setAttribute('role', 'list');", "")
-        js_txt = js_txt.replace('rail.setAttribute("role", "list");', "")
-        js_txt = js_txt.replace("setAttribute('role','list')", "removeAttribute('role')")
-        js_txt = js_txt.replace('setAttribute("role","list")', 'removeAttribute("role")')
-        js_txt = js_txt.replace(' role="list"', "")
-        js_txt = js_txt.replace(" role='list'", "")
-        mobile_js.write_text(js_txt, encoding="utf-8")
-    return inline_css
-
-
 def build() -> None:
     posts = load_posts()
     if DIST.exists():
@@ -710,15 +552,33 @@ def build() -> None:
     page_html = page_html.replace(marker, cards)
     insights.write_text(page_html, encoding="utf-8")
 
-    # Add Cloudflare's privacy-friendly Web Analytics beacon to all public
-    # rendered pages. Keep the authenticated admin area out of public analytics.
-    inline_css = optimize_dist_assets(DIST / "assets")
+    # Add Google Tag Manager, shared dataLayer helper, and Cloudflare Web Analytics
+    # to all public rendered pages. Keep authenticated /admin/ and legacy redirect
+    # stubs out of public analytics.
     for page in DIST.rglob("*.html"):
         if "admin" in page.relative_to(DIST).parts:
             continue
         content = page.read_text(encoding="utf-8")
-        content = optimize_performance_html(content, inline_css)
-        page.write_text(content, encoding="utf-8")
+        if 'http-equiv="refresh"' in content.lower():
+            continue
+        changed = False
+        if GTM_ID not in content:
+            head_open = re.search(r"<head\b[^>]*>", content, re.I)
+            if head_open:
+                content = content[:head_open.end()] + "\n" + GTM_HEAD + "\n" + content[head_open.end():]
+                changed = True
+            body_open = re.search(r"<body\b[^>]*>", content, re.I)
+            if body_open:
+                content = content[:body_open.end()] + "\n" + GTM_NOSCRIPT + "\n" + content[body_open.end():]
+                changed = True
+        if "movex-data-layer.js" not in content and "</body>" in content:
+            content = content.replace("</body>", '<script src="/assets/movex-data-layer.js" defer></script></body>')
+            changed = True
+        if "static.cloudflareinsights.com/beacon.min.js" not in content and "</body>" in content:
+            content = content.replace("</body>", f"{CF_WEB_ANALYTICS}</body>")
+            changed = True
+        if changed:
+            page.write_text(content, encoding="utf-8")
 
     urls: dict[str, str | None] = {ORIGIN: None}
     for page in sorted(ROOT.glob("*.html")):
@@ -738,35 +598,6 @@ def build() -> None:
     ET.indent(urlset, space="  ")
     (DIST / "sitemap.xml").write_bytes(ET.tostring(urlset, encoding="utf-8", xml_declaration=True))
     (DIST / "feed.xml").write_bytes(generate_rss(posts))
-    llms_lines = [
-        "# MoveX Digital",
-        "",
-        "> MoveX Digital is a performance-focused digital marketing agency connecting SEO, AI Search (GEO), Google Ads, Paid Social, Web Design, Analytics & Tracking, and Business Automation for local, ecommerce, and B2B businesses.",
-        "",
-        "## Core Pages",
-        f"- [Home]({ORIGIN}): Agency overview, service selector, and track record.",
-        f"- [What We Do]({urljoin(ORIGIN, 'what-we-do/')}): Full service breakdown across Search & AI, Paid Media, and Growth & Build.",
-        f"- [About Us]({urljoin(ORIGIN, 'about-us/')}): Leadership team, methodology, and global reach.",
-        f"- [Work]({urljoin(ORIGIN, 'work/')}): Client stories and testimonials.",
-        f"- [Our Media]({urljoin(ORIGIN, 'our-media/')}): Practical guides, insights, and platform updates.",
-        "",
-        "## Services",
-        f"- [SEO]({urljoin(ORIGIN, 'seo/')})",
-        f"- [AI Search & GEO]({urljoin(ORIGIN, 'ai-search-geo/')})",
-        f"- [Google Ads]({urljoin(ORIGIN, 'google-ads/')})",
-        f"- [Meta & Instagram Ads]({urljoin(ORIGIN, 'paid-social/')})",
-        f"- [LinkedIn Ads]({urljoin(ORIGIN, 'linkedin-ads/')})",
-        f"- [Web Design]({urljoin(ORIGIN, 'web-design/')})",
-        f"- [Analytics & Tracking]({urljoin(ORIGIN, 'analytics-tracking/')})",
-        f"- [Business Automation]({urljoin(ORIGIN, 'business-automation/')})",
-        f"- [Growth & Build]({urljoin(ORIGIN, 'growth-build/')})",
-        "",
-        "## Contact",
-        "- Email: ferdouswahidfahim24@gmail.com",
-        "- WhatsApp: +880 1521-724734",
-        "",
-    ]
-    (DIST / "llms.txt").write_text("\n".join(llms_lines), encoding="utf-8")
     (DIST / ".nojekyll").touch()
     print(f"Built clean-route pages and {len(posts)} published articles into {DIST}")
 
