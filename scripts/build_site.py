@@ -464,6 +464,112 @@ if(submissionType==='newsletter'){{document.getElementById('thanks-title').textC
 </script></body></html>'''
 
 
+PERF_IMG_MAP = {
+    "/assets/home-growth-collage.png": (
+        "/assets/home-growth-collage.webp",
+        'srcset="/assets/home-growth-collage-sm.webp 480w, /assets/home-growth-collage.webp 960w" sizes="(max-width: 760px) 92vw, 560px" width="960" height="836" fetchpriority="high" decoding="async"',
+    ),
+    "/assets/google-ads-account-dashboard.png": (
+        "/assets/google-ads-account-dashboard.webp",
+        'width="480" height="360" decoding="async"',
+    ),
+    "/assets/movex-media-space-hero.png": (
+        "/assets/movex-media-space-hero.webp",
+        'srcset="/assets/movex-media-space-hero-sm.webp 560w, /assets/movex-media-space-hero.webp 1024w" sizes="(max-width: 760px) 92vw, 1024px" width="1024" height="576" fetchpriority="high" decoding="async"',
+    ),
+    "/assets/team/movex-human-ai-team.png": (
+        "/assets/team/movex-human-ai-team.webp",
+        'srcset="/assets/team/movex-human-ai-team-sm.webp 560w, /assets/team/movex-human-ai-team.webp 1024w" sizes="(max-width: 760px) 92vw, 1024px" width="1024" height="576" loading="lazy" decoding="async"',
+    ),
+    "/assets/service-digital-marketing.png": (
+        "/assets/service-digital-marketing.webp",
+        'srcset="/assets/service-digital-marketing-sm.webp 520w, /assets/service-digital-marketing.webp 960w" sizes="(max-width: 760px) 92vw, 960px" width="960" height="640" loading="lazy" decoding="async"',
+    ),
+    "/assets/team/faiyaz-jusaid-fahim.png": (
+        "/assets/team/faiyaz-jusaid-fahim.webp",
+        'width="320" height="320" loading="lazy" decoding="async"',
+    ),
+    "/assets/team/tanvir-ahmed-roni.jpg": (
+        "/assets/team/tanvir-ahmed-roni.webp",
+        'width="200" height="200" loading="lazy" decoding="async"',
+    ),
+    "/assets/testimonials/lindsay-oleary.png": (
+        "/assets/testimonials/lindsay-oleary.webp",
+        'width="120" height="120" loading="lazy" decoding="async"',
+    ),
+    "/assets/testimonials/joe-barker.png": (
+        "/assets/testimonials/joe-barker.webp",
+        'width="120" height="120" loading="lazy" decoding="async"',
+    ),
+    "/assets/testimonials/bryan-blackwell.png": (
+        "/assets/testimonials/bryan-blackwell.webp",
+        'width="120" height="120" loading="lazy" decoding="async"',
+    ),
+}
+
+
+def optimize_performance_html(content: str) -> str:
+    logo_seen = [0]
+
+    def repl_logo(m: re.Match[str]) -> str:
+        tag = m.group(0)
+        logo_seen[0] += 1
+        tag = tag.replace("/assets/movex-digital-logo.png", "/assets/movex-digital-logo.webp")
+        if "width=" not in tag:
+            attrs = ' width="340" height="97" decoding="async"' if logo_seen[0] == 1 else ' width="340" height="97" loading="lazy" decoding="async"'
+            tag = tag[:-1] + attrs + ">"
+        return tag
+
+    content = re.sub(r'<img\b[^>]*src="/assets/movex-digital-logo\.png"[^>]*>', repl_logo, content)
+
+    for old_src, (new_src, extra) in PERF_IMG_MAP.items():
+        if old_src not in content:
+            continue
+        pat = re.compile(r'<img\b[^>]*src="' + re.escape(old_src) + r'"[^>]*>')
+
+        def repl_img(m: re.Match[str], o: str = old_src, n: str = new_src, ex: str = extra) -> str:
+            tag = m.group(0).replace(f'src="{o}"', f'src="{n}"')
+            tag = re.sub(r'\s+(?:width|height|loading|decoding|fetchpriority|srcset|sizes)="[^"]*"', "", tag)
+            return tag[:-1] + " " + ex + ">"
+
+        content = pat.sub(repl_img, content)
+
+    content = re.sub(
+        r'(<img\b[^>]*src="/assets/service-art/[^"]+\.svg"(?![^>]*decoding=)[^>]*)>',
+        r'\1 decoding="async">',
+        content,
+    )
+
+    if "/assets/home-growth-collage.webp" in content and 'rel="preload" as="image" href="/assets/home-growth-collage.webp"' not in content:
+        preload = '<link rel="preload" as="image" href="/assets/home-growth-collage.webp" imagesrcset="/assets/home-growth-collage-sm.webp 480w, /assets/home-growth-collage.webp 960w" imagesizes="(max-width: 760px) 92vw, 560px" fetchpriority="high">'
+        content = content.replace("</head>", f"  {preload}\n</head>", 1)
+    if "/assets/movex-media-space-hero.webp" in content and 'rel="preload" as="image" href="/assets/movex-media-space-hero.webp"' not in content:
+        preload = '<link rel="preload" as="image" href="/assets/movex-media-space-hero.webp" imagesrcset="/assets/movex-media-space-hero-sm.webp 560w, /assets/movex-media-space-hero.webp 1024w" imagesizes="(max-width: 760px) 92vw, 1024px" fetchpriority="high">'
+        content = content.replace("</head>", f"  {preload}\n</head>", 1)
+
+    old_footer_css = '<link rel="stylesheet" href="/assets/movex-footer.css">'
+    new_footer_css = '<link rel="preload" as="style" href="/assets/movex-footer.css" onload="this.onload=null;this.rel=\'stylesheet\'"><noscript><link rel="stylesheet" href="/assets/movex-footer.css"></noscript>'
+    if old_footer_css in content and new_footer_css not in content:
+        content = content.replace(old_footer_css, new_footer_css, 1)
+
+    content = content.replace(
+        "document.getElementById('footer-newsletter-form').addEventListener(",
+        "document.getElementById('footer-newsletter-form')?.addEventListener(",
+    )
+    return content
+
+
+def optimize_dist_css(dist_assets: Path) -> None:
+    for css_file in dist_assets.glob("*.css"):
+        raw = css_file.read_text(encoding="utf-8")
+        if css_file.name == "movex-footer.css" and "content-visibility" not in raw:
+            raw += "\n#movex-global-footer{content-visibility:auto;contain-intrinsic-size:1px 420px;}\n"
+        mini = re.sub(r"/\*[\s\S]*?\*/", "", raw)
+        mini = re.sub(r"\s+", " ", mini)
+        mini = re.sub(r"\s*([{}:;,>~])\s*", r"\1", mini).replace(";}", "}").strip()
+        css_file.write_text(mini, encoding="utf-8")
+
+
 def build() -> None:
     posts = load_posts()
     if DIST.exists():
@@ -543,9 +649,11 @@ def build() -> None:
         if "admin" in page.relative_to(DIST).parts:
             continue
         content = page.read_text(encoding="utf-8")
+        content = optimize_performance_html(content)
         if "static.cloudflareinsights.com/beacon.min.js" not in content:
             content = content.replace("</body>", f"{CF_WEB_ANALYTICS}</body>")
-            page.write_text(content, encoding="utf-8")
+        page.write_text(content, encoding="utf-8")
+    optimize_dist_css(DIST / "assets")
 
     urls: dict[str, str | None] = {ORIGIN: None}
     for page in sorted(ROOT.glob("*.html")):
