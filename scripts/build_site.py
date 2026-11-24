@@ -593,6 +593,7 @@ def optimize_performance_html(content: str, inline_css: dict[str, str]) -> str:
         'id="service-options"',
     )
     content = content.replace(' role="listitem"', "")
+    content = content.replace('class="mobile-service-rail" role="list"', 'class="mobile-service-rail"')
 
     # 9. Inject WCAG AA contrast overrides
     if "A11Y_CONTRAST_CSS" not in content and ".service-count,.service-count span" not in content and "</head>" in content:
@@ -626,6 +627,12 @@ def optimize_dist_assets(dist_assets: Path) -> dict[str, str]:
         js_txt = js_txt.replace('setAttribute("role","listitem")', 'removeAttribute("role")')
         js_txt = js_txt.replace(' role="listitem"', "")
         js_txt = js_txt.replace(" role='listitem'", "")
+        js_txt = js_txt.replace("rail.setAttribute('role', 'list');", "")
+        js_txt = js_txt.replace('rail.setAttribute("role", "list");', "")
+        js_txt = js_txt.replace("setAttribute('role','list')", "removeAttribute('role')")
+        js_txt = js_txt.replace('setAttribute("role","list")', 'removeAttribute("role")')
+        js_txt = js_txt.replace(' role="list"', "")
+        js_txt = js_txt.replace(" role='list'", "")
         mobile_js.write_text(js_txt, encoding="utf-8")
     return inline_css
 
@@ -731,6 +738,35 @@ def build() -> None:
     ET.indent(urlset, space="  ")
     (DIST / "sitemap.xml").write_bytes(ET.tostring(urlset, encoding="utf-8", xml_declaration=True))
     (DIST / "feed.xml").write_bytes(generate_rss(posts))
+    llms_lines = [
+        "# MoveX Digital",
+        "",
+        "> MoveX Digital is a performance-focused digital marketing agency connecting SEO, AI Search (GEO), Google Ads, Paid Social, Web Design, Analytics & Tracking, and Business Automation for local, ecommerce, and B2B businesses.",
+        "",
+        "## Core Pages",
+        f"- [Home]({ORIGIN}): Agency overview, service selector, and track record.",
+        f"- [What We Do]({urljoin(ORIGIN, 'what-we-do/')}): Full service breakdown across Search & AI, Paid Media, and Growth & Build.",
+        f"- [About Us]({urljoin(ORIGIN, 'about-us/')}): Leadership team, methodology, and global reach.",
+        f"- [Work]({urljoin(ORIGIN, 'work/')}): Client stories and testimonials.",
+        f"- [Our Media]({urljoin(ORIGIN, 'our-media/')}): Practical guides, insights, and platform updates.",
+        "",
+        "## Services",
+        f"- [SEO]({urljoin(ORIGIN, 'seo/')})",
+        f"- [AI Search & GEO]({urljoin(ORIGIN, 'ai-search-geo/')})",
+        f"- [Google Ads]({urljoin(ORIGIN, 'google-ads/')})",
+        f"- [Meta & Instagram Ads]({urljoin(ORIGIN, 'paid-social/')})",
+        f"- [LinkedIn Ads]({urljoin(ORIGIN, 'linkedin-ads/')})",
+        f"- [Web Design]({urljoin(ORIGIN, 'web-design/')})",
+        f"- [Analytics & Tracking]({urljoin(ORIGIN, 'analytics-tracking/')})",
+        f"- [Business Automation]({urljoin(ORIGIN, 'business-automation/')})",
+        f"- [Growth & Build]({urljoin(ORIGIN, 'growth-build/')})",
+        "",
+        "## Contact",
+        "- Email: ferdouswahidfahim24@gmail.com",
+        "- WhatsApp: +880 1521-724734",
+        "",
+    ]
+    (DIST / "llms.txt").write_text("\n".join(llms_lines), encoding="utf-8")
     (DIST / ".nojekyll").touch()
     print(f"Built clean-route pages and {len(posts)} published articles into {DIST}")
 
