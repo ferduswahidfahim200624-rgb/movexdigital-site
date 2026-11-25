@@ -9,3 +9,21 @@ body.mx-article-page{--post-paper:#fbfaf7;--post-ink:#11233c;--post-muted:#62718
 .local-seo-cover{background:#e7f0e9}
 .local-seo-cover>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .local-seo-cover>figcaption{color:#fff;background:#0b1b34c9;padding:7px 10px;border-radius:99px}
+
+/* Editorial Typography & Scannability Upgrade */
+.post-content{max-width:72ch}
+.post-content .post-intro{color:#0f2238;font-size:21px;line-height:1.62;margin:0 0 26px}
+.post-content p,.post-content li{color:#1e293b;font-size:17px;line-height:1.78}
+.post-content p{margin:0 0 20px}
+.post-content strong{color:#07182f;font-weight:700}
+.post-content a{color:#0f6c39;font-weight:600;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1.5px}
+.post-content a:hover{color:#094d28}
+.post-content h2{margin:46px 0 16px;padding-top:22px;border-top:1px solid #e4ebe5;color:#07182f;font-size:clamp(26px,3.2vw,34px);line-height:1.18}
+.post-content h3{margin:30px 0 10px;color:#0f2740;font-size:20px;font-weight:750;line-height:1.3}
+.post-content ul,.post-content ol{margin:0 0 22px;padding-left:24px}
+.post-content li{margin:9px 0;padding-left:6px}
+.post-content ul li::marker,.post-content ol li::marker{color:#008a2e;font-weight:700}
+.post-content code{padding:2px 7px;border-radius:6px;background:#eaf4ee;color:#0c4f2a;font-family:Consolas,"SFMono-Regular",Menlo,monospace;font-size:.88em;font-weight:600}
+.post-content blockquote{margin:28px 0;padding:20px 24px;border:1px solid #d5e6da;border-left:4px solid #008a2e;border-radius:0 14px 14px 0;background:#f2f8f4;color:#122b20}
+.post-content blockquote p{margin:0;color:#122b20;font-size:16.5px;line-height:1.7}
+@media(max-width:620px){.post-content p,.post-content li{font-size:16px;line-height:1.74}.post-content blockquote{padding:16px 18px}}
