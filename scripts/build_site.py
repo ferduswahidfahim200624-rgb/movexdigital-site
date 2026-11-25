@@ -282,13 +282,14 @@ def article_card(post: dict, is_latest: bool) -> str:
     title = esc(post["title"])
     excerpt = esc(post["excerpt"])
     category = esc(post["category"])
-    image = esc(post["image"])
+    raw_image = str(post["image"]).strip()
+    image = esc(raw_image if raw_image.startswith(("http://", "https://", "/")) else f"/{raw_image}")
     alt = esc(post["image_alt"])
     published = post["published"].isoformat()
     latest = f'<span class="media-latest-badge"><i aria-hidden="true"></i> LATEST · {post["published"].strftime("%b %d, %Y").upper()}</span>' if is_latest else ""
     topic = esc(str(post.get("topic", "all")))
     search_terms = esc(" ".join([title, excerpt, category, *post.get("tags", [])]))
-    return f'''<a class="article-card media-feature-card generated-article-card{' media-latest-card' if is_latest else ''}" data-topic="{topic}" data-search="{search_terms}" href="insights/{esc(slug)}/" aria-label="Read: {title}"><div class="media-card-visual"><img src="{image}" alt="{alt}" loading="lazy">{latest}</div><div class="media-card-copy"><span>{category.upper()} · {int(post.get('read_minutes', 6))} MIN READ · <time datetime="{published}">{post['published'].strftime('%B %d, %Y').upper()}</time></span><h3>{title}</h3><p>{excerpt}</p><span class="generated-read-link">Read the article <span aria-hidden="true">↗</span></span></div></a>'''
+    return f'''<a class="article-card media-feature-card generated-article-card{' media-latest-card' if is_latest else ''}" data-topic="{topic}" data-search="{search_terms}" href="/insights/{esc(slug)}/" aria-label="Read: {title}"><div class="media-card-visual"><img src="{image}" alt="{alt}" loading="lazy">{latest}</div><div class="media-card-copy"><span>{category.upper()} · {int(post.get('read_minutes', 6))} MIN READ · <time datetime="{published}">{post['published'].strftime('%B %d, %Y').upper()}</time></span><h3>{title}</h3><p>{excerpt}</p><span class="generated-read-link">Read the article <span aria-hidden="true">↗</span></span></div></a>'''
 
 
 def pretty_slug(path: Path) -> str:
