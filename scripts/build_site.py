@@ -228,6 +228,22 @@ def render_post(post: dict, header: str, footer: str) -> str:
     published = post["published"].isoformat()
     modified = str(post.get("modified", published))
     tags = post.get("tags", [])
+    raw_author = str(post.get("author", "")).strip()
+    has_custom_author = bool(raw_author)
+    author_name = raw_author or "MoveX Digital"
+    if has_custom_author:
+        primary_name = re.split(r"\s+[—–-]\s+", raw_author, maxsplit=1)[0].strip()
+        words = re.findall(r"[A-Za-z0-9]+", primary_name)
+        if len(words) >= 2:
+            author_initials = (words[0][0] + words[1][0]).upper()
+        elif words and len(words[0]) >= 2:
+            author_initials = words[0][:2].upper()
+        elif words:
+            author_initials = words[0][0].upper()
+        else:
+            author_initials = "MX"
+    else:
+        author_initials = "MX"
     body_html = render_markdown(post["body"])
     article_schema = {
         "@context": "https://schema.org",
@@ -236,7 +252,7 @@ def render_post(post: dict, header: str, footer: str) -> str:
         "description": post["description"],
         "datePublished": published,
         "dateModified": modified,
-        "author": {"@type": "Organization", "name": "MoveX Digital"},
+        "author": {"@type": "Person", "name": author_name} if has_custom_author else {"@type": "Organization", "name": "MoveX Digital"},
         "publisher": {"@type": "Organization", "name": "MoveX Digital", "url": ORIGIN},
         "mainEntityOfPage": canonical,
         "image": image_url,
@@ -268,7 +284,7 @@ def render_post(post: dict, header: str, footer: str) -> str:
 <main>
 <header class="post-shell post-top"><nav class="post-breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/our-media/">MoveX Media</a><span aria-hidden="true">/</span><span>{esc(post['category'])}</span></nav>
 <span class="post-label">{esc(post['category'])} · MoveX Media</span><h1 class="post-title">{esc(post['title'])}</h1>
-<p class="post-deck">{esc(post['excerpt'])}</p><div class="post-meta"><span class="post-author"><span class="post-author-mark">MX</span> MoveX Digital</span><i class="post-meta-dot"></i><time datetime="{published}">{post['published'].strftime('%B %d, %Y').replace(' 0', ' ')}</time><i class="post-meta-dot"></i><span>{int(post.get('read_minutes', 6))} min read</span></div><div class="post-topic-tags">{tag_html}</div></header>
+<p class="post-deck">{esc(post['excerpt'])}</p><div class="post-meta"><span class="post-author"><span class="post-author-mark">{esc(author_initials)}</span> {esc(author_name)}</span><i class="post-meta-dot"></i><time datetime="{published}">{post['published'].strftime('%B %d, %Y').replace(' 0', ' ')}</time><i class="post-meta-dot"></i><span>{int(post.get('read_minutes', 6))} min read</span></div><div class="post-topic-tags">{tag_html}</div></header>
 <figure class="post-shell post-cover"><img src="{esc(image)}" alt="{esc(post['image_alt'])}" loading="eager"><figcaption>{esc(post['image_alt'])}</figcaption></figure>
 <div class="post-shell post-layout"><article class="post-content"><p class="post-intro">{esc(post['excerpt'])}</p>{body_html}
 <section class="post-end-cta"><div><h2>Put the next move into practice.</h2><p>Tell MoveX what you want to improve and we’ll help you choose a practical next step.</p></div><a href="/#contact">Talk with MoveX ↗</a></section>
