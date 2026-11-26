@@ -257,6 +257,20 @@ def render_post(post: dict, header: str, footer: str) -> str:
             author_initials = "MX"
     else:
         author_initials = "MX"
+    author_photo = str(post.get("author_image", "")).strip()
+    if not author_photo:
+        author_lc = author_name.lower()
+        if "fahim" in author_lc or "ferdous" in author_lc:
+            author_photo = "/assets/team/faiyaz-jusaid-fahim.webp"
+        elif "tanvir" in author_lc:
+            author_photo = "/assets/team/tanvir-ahmed-roni.webp"
+    if author_photo and not author_photo.startswith(("http://", "https://", "/")):
+        author_photo = f"/{author_photo}"
+    author_avatar_html = (
+        f'<img class="post-author-photo" src="{esc(author_photo)}" alt="{esc(author_name)}" width="40" height="40" decoding="async">'
+        if author_photo
+        else f'<span class="post-author-mark" aria-hidden="true">{esc(author_initials)}</span>'
+    )
     body_html = render_markdown(post["body"])
     article_schema = {
         "@context": "https://schema.org",
@@ -297,10 +311,10 @@ def render_post(post: dict, header: str, footer: str) -> str:
 <main>
 <header class="post-shell post-top"><nav class="post-breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/our-media/">MoveX Media</a><span aria-hidden="true">/</span><span>{esc(post['category'])}</span></nav>
 <span class="post-label">{esc(post['category'])} · MoveX Media</span><h1 class="post-title">{esc(post['title'])}</h1>
-<p class="post-deck">{esc(post['excerpt'])}</p><div class="post-meta"><span class="post-author"><span class="post-author-mark">{esc(author_initials)}</span> {esc(author_name)}</span><i class="post-meta-dot"></i><time datetime="{published}">{post['published'].strftime('%B %d, %Y').replace(' 0', ' ')}</time><i class="post-meta-dot"></i><span>{int(post.get('read_minutes', 6))} min read</span></div><div class="post-topic-tags">{tag_html}</div></header>
+<p class="post-deck">{esc(post['excerpt'])}</p><div class="post-meta"><span class="post-author">{author_avatar_html} {esc(author_name)}</span><i class="post-meta-dot"></i><time datetime="{published}">{post['published'].strftime('%B %d, %Y').replace(' 0', ' ')}</time><i class="post-meta-dot"></i><span>{int(post.get('read_minutes', 6))} min read</span></div><div class="post-topic-tags">{tag_html}</div></header>
 <figure class="post-shell post-cover"><img src="{esc(image)}" alt="{esc(post['image_alt'])}" loading="eager"><figcaption>{esc(post['image_alt'])}</figcaption></figure>
 <div class="post-shell post-layout"><article class="post-content"><p class="post-intro">{esc(post['excerpt'])}</p>{body_html}
-<section class="post-end-cta"><div><h2>Put the next move into practice.</h2><p>Tell MoveX what you want to improve and we’ll help you choose a practical next step.</p></div><a href="/#contact">Talk with MoveX ↗</a></section>
+<section class="post-end-cta"><div class="post-cta-lead"><img class="post-cta-avatar" src="/assets/team/faiyaz-jusaid-fahim.webp" alt="Ferdous Wahid Fahim, Founder at MoveX Digital" width="64" height="64" loading="lazy" decoding="async"><div><h2>Put the next move into practice.</h2><p>Tell MoveX what you want to improve and we’ll help you choose a practical next step.</p></div></div><a href="/#contact">Talk with MoveX ↗</a></section>
 <a class="post-back-link" href="/our-media/">← Explore more MoveX insights</a></article><aside class="post-toc"><b>Keep exploring</b><a href="/what-we-do/">Explore our services</a><a href="/work/">See selected work</a><a class="toc-service" href="/#contact">Discuss your next move ↗</a></aside></div>
 </main>{footer}<script src="assets/movex-header.js" defer></script><script src="assets/movex-inbox-config.js"></script><script src="assets/movex-footer.js" defer></script><script src="assets/movex-article.js" defer></script>
 </body></html>'''
