@@ -261,7 +261,7 @@ def render_post(post: dict, header: str, footer: str) -> str:
     if not author_photo:
         author_lc = author_name.lower()
         if "fahim" in author_lc or "ferdous" in author_lc:
-            author_photo = "/assets/team/faiyaz-jusaid-fahim.webp"
+            author_photo = "/assets/team/ferdous-wahid-fahim.webp"
         elif "tanvir" in author_lc:
             author_photo = "/assets/team/tanvir-ahmed-roni.webp"
     if author_photo and not author_photo.startswith(("http://", "https://", "/")):
@@ -314,7 +314,7 @@ def render_post(post: dict, header: str, footer: str) -> str:
 <p class="post-deck">{esc(post['excerpt'])}</p><div class="post-meta"><span class="post-author">{author_avatar_html} {esc(author_name)}</span><i class="post-meta-dot"></i><time datetime="{published}">{post['published'].strftime('%B %d, %Y').replace(' 0', ' ')}</time><i class="post-meta-dot"></i><span>{int(post.get('read_minutes', 6))} min read</span></div><div class="post-topic-tags">{tag_html}</div></header>
 <figure class="post-shell post-cover"><img src="{esc(image)}" alt="{esc(post['image_alt'])}" loading="eager"><figcaption>{esc(post['image_alt'])}</figcaption></figure>
 <div class="post-shell post-layout"><article class="post-content"><p class="post-intro">{esc(post['excerpt'])}</p>{body_html}
-<section class="post-end-cta"><div class="post-cta-lead"><img class="post-cta-avatar" src="/assets/team/faiyaz-jusaid-fahim.webp" alt="Ferdous Wahid Fahim, Founder at MoveX Digital" width="64" height="64" loading="lazy" decoding="async"><div><h2>Put the next move into practice.</h2><p>Tell MoveX what you want to improve and we’ll help you choose a practical next step.</p></div></div><a href="/#contact">Talk with MoveX ↗</a></section>
+<section class="post-end-cta"><div class="post-cta-lead"><img class="post-cta-avatar" src="/assets/team/ferdous-wahid-fahim.webp" alt="Ferdous Wahid Fahim, Founder at MoveX Digital" width="64" height="64" loading="lazy" decoding="async"><div><h2>Put the next move into practice.</h2><p>Tell MoveX what you want to improve and we’ll help you choose a practical next step.</p></div></div><a href="/#contact">Talk with MoveX ↗</a></section>
 <a class="post-back-link" href="/our-media/">← Explore more MoveX insights</a></article><aside class="post-toc"><b>Keep exploring</b><a href="/what-we-do/">Explore our services</a><a href="/work/">See selected work</a><a class="toc-service" href="/#contact">Discuss your next move ↗</a></aside></div>
 </main>{footer}<script src="assets/movex-header.js" defer></script><script src="assets/movex-inbox-config.js"></script><script src="assets/movex-footer.js" defer></script><script src="assets/movex-article.js" defer></script>
 </body></html>'''
@@ -554,7 +554,7 @@ PERF_IMG_MAP = {
         'srcset="/assets/service-digital-marketing-sm.webp 520w, /assets/service-digital-marketing.webp 960w" sizes="(max-width: 760px) 92vw, 960px" width="960" height="640" loading="lazy" decoding="async"',
     ),
     "/assets/team/faiyaz-jusaid-fahim.png": (
-        "/assets/team/faiyaz-jusaid-fahim.webp",
+        "/assets/team/ferdous-wahid-fahim.webp",
         'width="180" height="180" loading="lazy" decoding="async"',
     ),
     "/assets/team/tanvir-ahmed-roni.jpg": (
