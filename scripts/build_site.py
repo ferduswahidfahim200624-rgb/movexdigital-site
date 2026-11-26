@@ -213,6 +213,19 @@ def render_markdown(source: str) -> str:
             if list_kind != kind:
                 close_list(); out.append(f"<{kind}>"); list_kind = kind
             out.append(f"<li>{inline_markdown(item.group(1))}</li>"); continue
+        m_img = re.match(r"^!\[([^\]]*)\]\(([^)]+)\)$", value)
+        if m_img:
+            close_paragraph(); close_list()
+            alt_text = esc(m_img.group(1).strip())
+            src_url = esc(m_img.group(2).strip())
+            out.append(
+                f'<figure class="post-diagram" style="margin:26px 0;padding:0">'
+                f'<img src="{src_url}" alt="{alt_text}" width="960" height="440" loading="lazy" decoding="async" '
+                f'style="display:block;width:100%;height:auto;border-radius:14px;border:1px solid #dce6df">'
+                f'<figcaption style="margin-top:8px;color:#475569;font-size:13px;line-height:1.5">{alt_text}</figcaption>'
+                f'</figure>'
+            )
+            continue
         close_list(); paragraph.append(value)
     close_paragraph(); close_list()
     if code_lines is not None:
