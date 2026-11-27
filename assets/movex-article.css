@@ -38,3 +38,14 @@ body.mx-article-page{--post-paper:#fbfaf7;--post-ink:#11233c;--post-muted:#62718
 .post-end-cta>a{flex:none;padding:13px 22px !important;border-radius:99px;background:#ffa900 !important;color:#07182f !important;font-size:13px !important;font-weight:800 !important;text-decoration:none !important;box-shadow:0 8px 20px rgba(255,169,0,.28);transition:transform .18s ease,background .18s ease}
 .post-end-cta>a:hover{background:#ffb82e !important;color:#07182f !important;transform:translateY(-1px)}
 @media(max-width:620px){.post-cta-lead{align-items:flex-start}.post-cta-avatar{width:54px;height:54px}.post-end-cta h2{font-size:21px !important}}
+
+/* Sticky Right Sidebar Wrapper + Service-Matched CTA Card */
+.post-sidebar{position:sticky;top:104px;display:flex;flex-direction:column;gap:16px}
+.post-sidebar .post-toc{position:static;top:auto}
+.post-sidebar-cta{padding:20px 18px;border-radius:15px;background:linear-gradient(155deg,#07182f 0%,#0b3b34 68%,#0f5c3e 100%);color:#ffffff;box-shadow:0 14px 30px rgba(7,24,47,.16);border:1px solid rgba(255,255,255,.08)}
+.post-sidebar-cta-eyebrow{display:inline-flex;align-items:center;gap:6px;margin-bottom:10px;padding:4px 9px;border-radius:99px;background:rgba(255,169,0,.16);color:#ffbf3c;font-size:10px;font-weight:850;letter-spacing:.12em;text-transform:uppercase}
+.post-sidebar-cta h3{margin:0 0 8px !important;color:#ffffff !important;font-family:Georgia,"Times New Roman",serif;font-size:19px !important;line-height:1.22 !important;letter-spacing:-.02em}
+.post-sidebar-cta p{margin:0 0 16px !important;color:#d6e6de !important;font-size:13px !important;line-height:1.58 !important}
+.post-sidebar-cta a{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:11px 14px;border-radius:99px;background:#ffa900;color:#07182f !important;font-size:12px;font-weight:850;text-decoration:none !important;box-shadow:0 8px 18px rgba(255,169,0,.28);transition:transform .16s ease,background .16s ease}
+.post-sidebar-cta a:hover{background:#ffb82e;transform:translateY(-1px)}
+@media(max-width:850px){.post-sidebar{position:static;top:auto}}
