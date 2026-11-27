@@ -233,6 +233,78 @@ def render_markdown(source: str) -> str:
     return "\n".join(out)
 
 
+def resolve_service_cta(meta: dict) -> tuple[str, str, str, str, str]:
+    haystack = " ".join([
+        str(meta.get("category", "")),
+        " ".join(str(t) for t in meta.get("tags", [])),
+        str(meta.get("title", "")),
+        str(meta.get("topic", "")),
+    ]).lower()
+    if any(k in haystack for k in ("meta", "capi", "paid social")):
+        default = (
+            "PAID SOCIAL & CAPI",
+            "Fix your Meta tracking & scale ROAS",
+            "Clean Pixel + Server-Side CAPI deduplication and high-converting Meta ad campaigns.",
+            "Explore Meta Ads ↗",
+            "/paid-social.html",
+        )
+    elif any(k in haystack for k in ("ga4", "gtm", "tracking", "analytics", "conversion")):
+        default = (
+            "ANALYTICS & TRACKING",
+            "Stop feeding ads noisy data",
+            "Full-stack GA4, GTM, Enhanced Conversions, and Stape server-side tracking audits.",
+            "Explore Tracking ↗",
+            "/analytics-tracking.html",
+        )
+    elif any(k in haystack for k in ("google ads", "ppc")):
+        default = (
+            "GOOGLE ADS",
+            "Turn ad spend into qualified leads",
+            "High-intent Search, Shopping, and PMax campaigns backed by clean conversion tracking.",
+            "Explore Google Ads ↗",
+            "/google-ads.html",
+        )
+    elif any(k in haystack for k in ("local seo", "gbp")):
+        default = (
+            "LOCAL SEO",
+            "Win your local map pack",
+            "GBP optimization, local landing pages, and clean citation authority for service businesses.",
+            "Explore Local SEO ↗",
+            "/local-seo.html",
+        )
+    elif any(k in haystack for k in ("ecommerce", "shopify")):
+        default = (
+            "ECOMMERCE SEO",
+            "Grow organic store revenue",
+            "Technical, category, and product SEO built for high-converting ecommerce brands.",
+            "Explore Ecommerce SEO ↗",
+            "/ecommerce-seo.html",
+        )
+    elif any(k in haystack for k in ("ai search", "geo", "aeo")):
+        default = (
+            "AI SEARCH & GEO",
+            "Get cited in AI answers",
+            "Structure your expertise so Google AI Overviews, ChatGPT, and Perplexity recommend you.",
+            "Explore AI Search ↗",
+            "/ai-search-geo.html",
+        )
+    else:
+        default = (
+            "SEO SERVICES",
+            "Get your priority pages indexed & ranking",
+            "Technical audits, crawl hygiene, and international SEO sprints built for compounding leads.",
+            "Explore SEO Services ↗",
+            "/seo.html",
+        )
+    return (
+        str(meta.get("service_cta_eyebrow") or default[0]).strip(),
+        str(meta.get("service_cta_title") or default[1]).strip(),
+        str(meta.get("service_cta_copy") or default[2]).strip(),
+        str(meta.get("service_cta_label") or default[3]).strip(),
+        str(meta.get("service_cta_url") or default[4]).strip(),
+    )
+
+
 def render_post(post: dict, header: str, footer: str) -> str:
     slug = post["slug"]
     canonical = urljoin(ORIGIN, f"insights/{slug}/")
@@ -287,6 +359,7 @@ def render_post(post: dict, header: str, footer: str) -> str:
     }
     escaped_schema = json.dumps(article_schema, ensure_ascii=False).replace("</", "<\\/")
     tag_html = "".join(f'<span class="post-topic-tag">{esc(tag)}</span>' for tag in tags)
+    cta_eyebrow, cta_title, cta_copy, cta_label, cta_url = resolve_service_cta(post)
     return f'''<!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -315,7 +388,7 @@ def render_post(post: dict, header: str, footer: str) -> str:
 <figure class="post-shell post-cover"><img src="{esc(image)}" alt="{esc(post['image_alt'])}" loading="eager"><figcaption>{esc(post['image_alt'])}</figcaption></figure>
 <div class="post-shell post-layout"><article class="post-content"><p class="post-intro">{esc(post['excerpt'])}</p>{body_html}
 <section class="post-end-cta"><div class="post-cta-lead"><img class="post-cta-avatar" src="/assets/team/ferdous-wahid-fahim.webp" alt="Ferdous Wahid Fahim, Founder at MoveX Digital" width="64" height="64" loading="lazy" decoding="async"><div><h2>Put the next move into practice.</h2><p>Tell MoveX what you want to improve and we’ll help you choose a practical next step.</p></div></div><a href="/#contact">Talk with MoveX ↗</a></section>
-<a class="post-back-link" href="/our-media/">← Explore more MoveX insights</a></article><aside class="post-toc"><b>Keep exploring</b><a href="/what-we-do/">Explore our services</a><a href="/work/">See selected work</a><a class="toc-service" href="/#contact">Discuss your next move ↗</a></aside></div>
+<a class="post-back-link" href="/our-media/">← Explore more MoveX insights</a></article><div class="post-sidebar"><aside class="post-toc"><b>Keep exploring</b><a href="/what-we-do/">Explore our services</a><a href="/work/">See selected work</a><a class="toc-service" href="/#contact">Discuss your next move ↗</a></aside><aside class="post-sidebar-cta" aria-label="Recommended service"><span class="post-sidebar-cta-eyebrow">{esc(cta_eyebrow)}</span><h3>{esc(cta_title)}</h3><p>{esc(cta_copy)}</p><a href="{esc(cta_url)}">{esc(cta_label)}</a></aside></div></div>
 </main>{footer}<script src="assets/movex-header.js" defer></script><script src="assets/movex-inbox-config.js"></script><script src="assets/movex-footer.js" defer></script><script src="assets/movex-article.js" defer></script>
 </body></html>'''
 
