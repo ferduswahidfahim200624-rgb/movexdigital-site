@@ -367,6 +367,7 @@ def render_post(post: dict, header: str, footer: str) -> str:
 <meta name="theme-color" content="#fbfaf7">
 <title>{esc(post['title'])} | MoveX Media</title>
 <meta name="description" content="{esc(post['description'])}">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 <link rel="canonical" href="{esc(canonical)}">
 <meta property="og:type" content="article"><meta property="og:site_name" content="MoveX Digital">
 <meta property="og:title" content="{esc(post['title'])}"><meta property="og:description" content="{esc(post['description'])}">
@@ -745,6 +746,15 @@ def optimize_performance_html(content: str, inline_css: dict[str, str]) -> str:
         "document.getElementById('footer-newsletter-form').addEventListener(",
         "document.getElementById('footer-newsletter-form')?.addEventListener(",
     )
+
+    # 11. Ensure Discover/AI Search robots directive on all pages without explicit robots meta
+    if (
+        'http-equiv="refresh"' not in content.lower()
+        and not re.search(r'<meta\b[^>]*\bname=["\']robots["\']', content, re.IGNORECASE)
+        and "</head>" in content
+    ):
+        robots_meta = '<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">'
+        content = content.replace("</head>", f"  {robots_meta}\n</head>", 1)
     return content
 
 
@@ -936,6 +946,12 @@ def build() -> None:
         "## Contact",
         "- Email: ferdouswahidfahim24@gmail.com",
         "- WhatsApp: +880 1521-724734",
+        "",
+        "## Published Guides & Insights",
+        *[
+            f"- [{post['title']}]({urljoin(ORIGIN, 'insights/' + post['slug'] + '/')}): {post['excerpt']}"
+            for post in posts
+        ],
         "",
     ]
     (DIST / "llms.txt").write_text("\n".join(llms_lines), encoding="utf-8")
